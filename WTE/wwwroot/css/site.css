@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+header {
+    height: 450px;
+    min-height: 450px;
+    background-image: url('../Content/Images/mainBackground.png');
+    display: flex;
+}
+a {
+    justify-content: space-between;
+    margin-right: 40px;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-family: Raleway;
+    font-size: 20px;
+    margin-top: 40px;
+}
+.user_agreement {
+    padding-left: 40px;
+    margin-right: 250px;
+    display: inline-block;
+}
+
+.logo {
+    justify-content: space-between;
+    text-decoration: none;
+    display:inline-block;
+    color: #FFFFFF;
+    font-family: Raleway;
+    font-size: 32px;
+    text-align: left;
+    margin-left: 150px;
+    
+    padding-top:30px;
+}
+
+.mains_cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    padding-top:60px;
+    
+}
+.card {
+    background-color: #FAFAFA;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    height: 70px;
+    border-radius: 19px;
+    overflow: hidden;
+    padding: 16px;
+    font-family: Raleway;
+    text-align:center;
+    font-size: 18px;
+    transition:transform.2s;
+}
+    .card:hover {
+        transform: scale(1.2);
+    }
+
+.background_main {
+    background-color: #F1F1F1;
+    height:400px;
+}
+.overlap {
+    background-image: url('../Content/Images/Authorization.png');
+    height: 900px;
+    min-height: 900px;
+}
+html {
+    box-sizing:border-box;
+    height:stretch;
+}
+
+
+.regisatrtion_white {
+    background-color: #EDEDED;
+    width: 500px;
+    height: 530px;
+}
+.registration_black {
+    background-color: #262626;
+    opacity: 85%;
+    width: 300px;
+    height: 530px;
+}
+.registration_card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top:100px;
+}
+
+
+
+
+
+

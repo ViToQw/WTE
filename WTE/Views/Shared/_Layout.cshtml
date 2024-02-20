@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/siteAutorization.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.15/dist/vue.global.js"></script>
+   
+</head>
+<body>
+    
+    <header class="site_header">
+        <p class="logo">What To Eat?</p>       
+        <nav>    
+            <a class="user_agreement" href="/userAgreement">Пользовательское соглашение</a>
+            <a href="/howWorks">Как это работает</a>
+            <a href="/recipes">Рецепты</a>
+            <a href="/Account" @* asp-controller="Home" asp-action="Overlap" *@>Аккаунт</a>
+        </nav>
+    </header>
+   
+    <main>
+      @*  <div class="mains_cards"> 
+           <div class="card">
+                <p>
+                    Возможность добавлять
+                    новые блюда
+                </p>
+           </div>
+           <div class="card">
+                <p>
+                    Множество
+                    рецептов
+                </p>
+           </div>
+           <div class="card">
+               <p>
+                    Возможность добавлять
+                    новые блюда
+               </p>
+           </div>
+            <div class="card">
+                <p>
+                    Возможность редактировать 
+                    рецепты
+                </p>
+            </div>
+            <div class="card">
+                <p>
+                    Возможность удалять блюда
+                </p>
+            </div>
+       </div> *@
+
+        @RenderBody()
+        @RenderSection("Scripts", required: false)
+    </main>
+   
+</body>
+</html>
+
