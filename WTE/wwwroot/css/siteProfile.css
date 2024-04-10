@@ -1,0 +1,61 @@
+
+.profile {
+ 
+    height: 900px;
+    min-height: 900px;
+    background: #F1F1F1;
+}
+
+
+.save_changed {
+    font-family: Raleway;
+    font-size: 18px;
+    background-color: #E07901;
+    color: #FFFFFF;
+    border: none;
+    width: 186px;
+    height: 56px;
+    position: relative;
+    padding-right: 40px; /* Увеличили отступ для arrow */
+    overflow: hidden;
+    text-align: left;
+    padding-left: 21px;
+    transition: transform.2s;
+}
+    .save_changed:hover {
+        transform: scale(1.1);
+    }
+
+
+.profile_white {
+    background-color: #FAFAFA;
+    width: 500px;
+    height: 510px;
+}
+.profile_gray {
+    background: #262626;
+    opacity: 85%;
+    height:510px; 
+    width:700px;
+}
+.profile_card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 100px;
+}
+.profile_info {
+    color: #FFFFFF;
+    font-size: 18px;
+    font-family: Raleway;
+    margin-left: 60px;
+    margin-top: 20px;
+}
+
+
+
+
+
+
+
+

@@ -11,5 +11,11 @@ namespace WTE.Controllers
             return View();
         }
 
+        public IActionResult GoToProfile()
+        {
+            // Перенаправление на действие Profile контроллера Account
+            return RedirectToAction("Profile", "Account");
+        }
+
     }
 }

@@ -6,6 +6,7 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/siteAutorization.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/siteProfile.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
@@ -14,14 +15,23 @@
    
 </head>
 <body>
-    
+    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
     <header class="site_header">
         <p class="logo">What To Eat?</p>       
         <nav>    
             <a class="user_agreement" href="/userAgreement">Пользовательское соглашение</a>
             <a href="/howWorks">Как это работает</a>
             <a href="/recipes">Рецепты</a>
-            <a href="/Account" @* asp-controller="Home" asp-action="Overlap" *@>Аккаунт</a>
+          
+            @if (Configuration["IsAutorization"] != "false")
+            {
+                <a href="/Account/Profile">Аккаунт</a>
+            }
+            else
+            {
+                <a href="/Account/Index">Аккаунт</a>
+
+            }
         </nav>
     </header>
    

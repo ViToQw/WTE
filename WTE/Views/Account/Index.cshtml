@@ -80,6 +80,7 @@
         app.mount("#vueapp");
     </script>
 } *@
+
 <div class="overlap" id="vueapp">
     <div class="registration_card">
         <div class="regisatrtion_white">
@@ -101,11 +102,12 @@
         </div>
 
         <div class="registration_black">
-            <h1 class="white_text">У вас нет есть аккаунта?</h1>
-            <p class="description">
-                Если у вас есть аккаунта пройдите авторизацию.
-                Тут должен быть какой то текст. Я его придумаю позже
-            </p>
+            <h1 class="white_text">What To Eat?</h1>
+            <div class="description">
+                <p>На сайте вы найдете все необходимые инструменты для создания, редактирования и удаления рецептов, а также для организации своего аккаунта.</p>
+                <p>Благодаря разнообразным опциям фильтрации по сложности, времени приготовления и другим критериям, вы сможете легко находить нужные рецепты в любой момент времени.</p>
+                <p>What To Eat? предоставляет возможность создавать собственные фильтры и настраивать их, обеспечивая гибкость и удобство в поиске рецептов.</p>
+            </div>
         </div>
     </div>
 </div>
@@ -114,6 +116,8 @@
     header {
         display: none;
     }
+
+    
 
     .error {
         color: red;
@@ -155,7 +159,7 @@
                                 return;
                             }
                             if (user.admin !== false) {
-                                window.location.href = '/RecipeCards/Index';
+                                window.location.href = '/RecipeCards/Index';                                
                             } else {
                                 console.error('Пользователь не является администратором');
                                 this.loginError = true;

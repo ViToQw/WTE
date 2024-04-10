@@ -1,0 +1,153 @@
+﻿@{
+    ViewData["Title"] = "Личный Аккаунт";
+}
+<div id="profileApp">
+    <div class="profile">
+        <div class="profile_card">
+            <div class="profile_white">
+                <h1 class="autorization_text"> Админитсратор</h1>
+                <img v-bind:src="user.image" class="profile_image" alt="Аватар" />
+                <p class="admin_name">{{user.name}}</p>
+                <button class="save_changed" v-on:click="saveChanges">Сохранить изменения</button>
+            </div>
+
+            <div class="profile_gray">
+                <h1 class="white_text">Данные об аккаунте</h1>
+                <div class="profile_info_block">
+                    <p class="profile_info">Имя</p>
+                    <input v-model="user.name" class="input_info" placeholder="Введите имя" />
+                </div>
+                <div class="profile_info_block">
+                    <p class="profile_info">Телефон</p>
+                    <input v-model="user.phone" class="input_info" placeholder="Введите телефон" />
+                </div>
+                <div class="profile_info_block">
+                    <p class="profile_info">Дата регистрации</p>
+                    <p class="profile_info">{{ user.createdAt }}</p>
+                </div>
+                <div class="profile_info_block">
+                    <p class="profile_info">Пароль</p>
+                    <input v-model="user.password" class="input_info" placeholder="Введите пароль" type="password" />
+                </div>
+                <button>Выйти из аккаунта</button>
+                <button>Удалить аккаунт</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const profileApp = Vue.createApp({
+        data() {
+            return {
+                user: {
+                    name: '',
+                    phone: '',
+                    createdAt: '',
+                    password: '',
+                    image: ''
+                }
+            };
+        },
+        methods: {
+            fetchUserData() {
+                axios.get('http://hnt8.ru:8222/account')
+                    .then(response => {
+                        this.user = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении данных с API:', error);
+                    });
+            },
+            saveChanges() {
+                console.log('Сохранение изменений...');
+            }
+        },
+        created() {
+            this.fetchUserData();
+        }
+    });
+
+    profileApp.mount("#profileApp");
+</script>
+
+
+
+
+
+
+<style scoped>
+    header {
+        display: none;
+    }
+
+    #profileApp .profile_info_block {
+        display: flex; /* Добавляем свойство flex */
+        align-items: center; /* Выравниваем элементы по вертикали */
+        margin-top: 20px;
+    }
+
+        #profileApp .profile_info_block .input_info {
+            color: #FFFFFF;
+            font-family: Raleway;
+            font-size: 18px;
+            border: none;
+            background-color: transparent;
+            width: 200px;
+            margin-right: 50px;
+        }
+
+    #profileApp .input_info::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 1px;
+            background-color: white;
+            transition: width 0.2s ease, left 0.2s ease;
+        }
+
+    #profileApp .input_info:focus::after {
+            left: 0;
+            width: 100%;
+        }
+
+    #profileApp .profile {
+        height: 900px;
+        min-height: 900px;
+        background: #F1F1F1;
+    }
+
+    .profile_white {
+        background-color: #FAFAFA;
+        width: 500px;
+        height: 510px;
+    }
+
+    .profile_gray {
+        background: #262626;
+        opacity: 85%;
+        height: 510px;
+        width: 700px;
+    }
+
+    .profile_card {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-top: 100px;
+    }
+
+    .profile_info {
+        color: #FFFFFF;
+        font-size: 18px;
+        font-family: Raleway;
+        margin-right: 10px; 
+    }
+    
+</style>
+
+
+

@@ -9,18 +9,16 @@ namespace WTE.Controllers
         {
             return View();
         }
-/*
-        [HttpPost]
-        public IActionResult Check()
+
+        [Route("account/profile")]
+        public IActionResult Profile()
         {
-            if (ModelState.IsValid)
-            {
-                return Redirect("/");
-            }
-            return View("Index");
-        }*/
+            return View();
+        }
+        
 
     }
+    
 
 
-}
+    }

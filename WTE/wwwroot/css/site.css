@@ -1,7 +1,7 @@
 * {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+  /*  overflow: hidden;*/
 }
 
 header {
@@ -87,7 +87,7 @@ html {
 .registration_black {
     background-color: #262626;
     opacity: 85%;
-    width: 300px;
+    width: 350px;
     height: 530px;
 }
 .registration_card {

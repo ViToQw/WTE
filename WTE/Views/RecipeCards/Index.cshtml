@@ -1,7 +1,139 @@
 ﻿
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Рецепты";
 }
 
-<h1>Что же тут такого</h1>
+ @* <div class="recipe_card">
+   
+    <div class="recipe_ingredient_cards" id="recipe-container">
+      
+         <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card">
+            <h2>{{ recipe.title }}</h2>
+            <p>{{ recipe.instructions }}</p>
+            <p>{{ recipe.cookingTime }} минут</p>
+            <p>{{ recipe.difficulty }}</p>
+            <ul>
+                <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">{{ ingredient.name }} - {{ ingredient.quantity }}</li>
+            </ul>
+        </div>
 
+    </div>
+</div
+ *@
+<div id="recipeCardsApp">
+    <div class="div_filters">
+        <select class="filters" v-model="selectedOption">
+            <option value="option1">Опция 1</option>
+            <option value="option2">Опция 2</option>
+            <option value="option3">Опция 3</option>
+        </select>
+        <select class="filters" v-model="selectedOption">
+            <option value="option1">Опция 1</option>
+            <option value="option2">Опция 2</option>
+            <option value="option3">Опция 3</option>
+        </select>
+        <select class="filters" v-model="selectedOption">
+            <option value="option1">Опция 1</option>
+            <option value="option2">Опция 2</option>
+            <option value="option3">Опция 3</option>
+        </select>
+    </div>
+    <div class="div_search">
+        <input class="search" placeholder="Поиск" />
+    </div>
+    <div class="recipe-cards">
+        <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card">
+            <h2>{{ recipe.title }}</h2>
+            <p>{{ recipe.instructions }}</p>
+            <p>{{ recipe.cookingTime }} минут</p>
+            <p>{{ recipe.difficulty }}</p>
+            <ul>
+                <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">{{ ingredient.name }} - {{ ingredient.quantity }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue@next"></script>
+<script>
+    const recipeCardsApp = Vue.createApp({
+        data() {
+            return {
+                recipes: []
+            };
+        },
+        methods: {
+            fetchRecipes() {
+                axios.get('http://hnt8.ru:8222/recipe')
+                    .then(response => {
+                        this.recipes = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении данных о рецептах:', error);
+                    });
+            }
+        },
+        mounted() {
+            this.fetchRecipes();
+        }
+    });
+
+    recipeCardsApp.mount("#recipeCardsApp");
+</script>
+
+
+<style>
+    .div_filters{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-left:72px;
+        padding-top: 24px;
+        display: inline-block;
+    }
+    .recipe_card_white{
+        width:326px;
+        height:400px;
+        background: #FAFAFA;
+    }
+
+    .recipe_card_gray{
+        width:299px;
+        height:400px;
+        background: #262626;
+        opacity:85%;
+    }
+
+    .recipe_ingredient_cards{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-top: 24px;
+    }
+    .div_search{
+        display: inline-block;
+    }
+    .recipe_card{
+        background: #F1F1F1;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    .filters{
+        background: #FAFAFA;
+        font-family: Raleway;
+        font-size:18px; 
+        heigh:46px;
+        width:200px;
+        text-align:center;
+        border:none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration 
+@{
+    Configuration["IsAutorization"] = "true";
+}

@@ -13,6 +13,34 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+//app.UseHttpsRedirection();
+//app.UseStaticFiles();
+
+//app.UseRouting();
+
+//app.UseAuthorization();
+
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//app.Run();
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute(
+//        name: "default",
+//        pattern: "{controller=Home}/{action=Index}/{id?}");
+//    endpoints.MapControllerRoute(
+//        name: "recipe",
+//        pattern: "RecipeCards/Index",  // Это маршрут для RecipeCards/Index
+//        defaults: new { controller = "RecipeCards", action = "Index" });
+//    endpoints.MapControllerRoute(
+//        name: "account",
+//        pattern: "Account/Profile",  // Это маршрут для Account/Profile
+//        defaults: new { controller = "Account", action = "Profile" });
+//});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -35,5 +63,9 @@ app.UseEndpoints(endpoints =>
         name: "recipe",
         pattern: "RecipeCards/Index",  // Это маршрут для RecipeCards/Index
         defaults: new { controller = "RecipeCards", action = "Index" });
+    endpoints.MapControllerRoute(
+        name: "account",
+        pattern: "Account/Profile",  // Это маршрут для Account/Profile
+        defaults: new { controller = "Account", action = "Profile" });
 });
 
