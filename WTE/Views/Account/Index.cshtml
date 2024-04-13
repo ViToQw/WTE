@@ -2,85 +2,6 @@
     ViewData["Title"] = "Аккаунт";
 }
 
-@* <div class="overlap" id="vueapp">
-    <div class="registration_card">
-        <div class="regisatrtion_white">
-            <div>
-                <h1 class="autorization_text">Авторизация</h1>
-            </div>
-            <div class="autorization_div">
-                <input class="autorization_input_text" placeholder="Введите телефон" v-model="phone_number" />
-                
-            </div>
-            <div class="autorization_div">
-                <input type="password" class="autorization_input_text" placeholder="Введите пароль" v-model="password" />
-               
-            </div>
-            <div class="autorization_div">
-                <button class="logIn" v-on:click="login">Войти <span class="arrow"> >> </span> </button>
-            </div>
-        </div>
-
-        <div class="registration_black">
-            <h1 class="white_text">У вас нет есть аккаунта?</h1>
-            <p class="description">
-                Если у вас есть аккаунта пройдите авторизацию.
-                Тут должен быть какой то текст. Я его придумаю позже
-            </p>           
-        </div>
-    </div>
-</div>
-
-<style>
-    header {
-        display: none;
-    }
-</style>
-
-@section Scripts{
-    <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    
-                    phone_number: '',
-                    password: ''
-                }
-            },
-            methods: {
-                login() {
-                    if (!this.phone_number || !this.password) {
-                        console.error('Введите телефон и пароль');
-                        return;
-                    }
-                    axios.get('http://hnt8.ru:8222/account')
-                        .then(response => {
-                            const user = response.data.find(user => user.phone === this.phone_number);
-                            if (!user) {
-                                console.error('Пользователь с указанным телефоном не найден');
-                                return;
-                            }
-                            if (user.password !== this.password) {
-                                console.error('Неверный пароль');
-                                return;
-                            }
-                            if (user.admin!== false) {
-                                window.location.href = '/RecipeCards/Index';
-                            } else {
-                                console.error('Пользователь не является администратором');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Ошибка при проверке данных пользователя:', error);
-                        });
-                }
-            }
-        });
-
-        app.mount("#vueapp");
-    </script>
-} *@
-
 <div class="overlap" id="vueapp">
     <div class="registration_card">
         <div class="regisatrtion_white">
@@ -136,10 +57,15 @@
                     phone_number: '',
                     password: '',
                     loginError: false,
-                    showErrors: false
+                    showErrors: false, 
+                    id:''
                 }
             },
             methods: {
+                AddIdUser(id) {
+                    const id_user = id;
+                    axios.get('/Account/SetIdUser/${id_user}')
+                },
                 login() {
                     this.showErrors = true;
                     if (!this.phone_number || !this.password) {
@@ -159,7 +85,8 @@
                                 return;
                             }
                             if (user.admin !== false) {
-                                window.location.href = '/RecipeCards/Index';                                
+                                this.AddIdUser(user.id);
+                                window.location.href = '/RecipeCards/Index';  
                             } else {
                                 console.error('Пользователь не является администратором');
                                 this.loginError = true;
@@ -171,6 +98,8 @@
                         });
                 }
             }
+           
+
         });
 
         app.mount("#vueapp");

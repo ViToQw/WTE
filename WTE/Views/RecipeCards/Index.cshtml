@@ -2,54 +2,64 @@
 @{
     ViewData["Title"] = "Рецепты";
 }
-
- @* <div class="recipe_card">
-   
-    <div class="recipe_ingredient_cards" id="recipe-container">
-      
-         <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card">
-            <h2>{{ recipe.title }}</h2>
-            <p>{{ recipe.instructions }}</p>
-            <p>{{ recipe.cookingTime }} минут</p>
-            <p>{{ recipe.difficulty }}</p>
-            <ul>
-                <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">{{ ingredient.name }} - {{ ingredient.quantity }}</li>
-            </ul>
-        </div>
-
-    </div>
-</div
- *@
-<div id="recipeCardsApp">
+<div id="recipeCardsApp" class="recipe_card_app">
     <div class="div_filters">
-        <select class="filters" v-model="selectedOption">
-            <option value="option1">Опция 1</option>
-            <option value="option2">Опция 2</option>
-            <option value="option3">Опция 3</option>
-        </select>
-        <select class="filters" v-model="selectedOption">
-            <option value="option1">Опция 1</option>
-            <option value="option2">Опция 2</option>
-            <option value="option3">Опция 3</option>
-        </select>
-        <select class="filters" v-model="selectedOption">
-            <option value="option1">Опция 1</option>
-            <option value="option2">Опция 2</option>
-            <option value="option3">Опция 3</option>
-        </select>
-    </div>
-    <div class="div_search">
-        <input class="search" placeholder="Поиск" />
+        <div class="filters-container">
+            <select class="filters" v-model="difficultyFilter">
+                <option value="">Все сложности</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+            <select class="filters" v-model="timeFilter">
+                <option value="">Все время</option>
+                <option value="moreThan10">Более 10 минут</option>
+                <option value="moreThan30">Более 30 минут</option>
+                <option value="moreThan60">Более часа</option>
+            </select>
+            <select class="filters" v-model="ingredientCountFilter">
+                <option value="">Все ингредиенты</option>
+                <option value="moreThan3">Более 3 ингредиентов</option>
+                <option value="moreThan5">Более 5 ингредиентов</option>
+                <option value="moreThan10">Более 10 ингредиентов</option>
+                <option value="moreThan15">Более 15 ингредиентов</option>
+                <option value="moreThan20">Более 20 ингредиентов</option>
+                <option value="moreThan25">Более 25 ингредиентов</option>
+            </select>
+        </div>
+        <div class="filters-container">
+            <input class="search" placeholder="Поиск" v-model="searchText" />
+        </div>
+        <div class="new_dish">
+            <button class="button_orange" v-on:click="showModal = true" >Добавить новое блюдо</button>
+         
+        </div>
     </div>
     <div class="recipe-cards">
-        <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card">
-            <h2>{{ recipe.title }}</h2>
-            <p>{{ recipe.instructions }}</p>
-            <p>{{ recipe.cookingTime }} минут</p>
-            <p>{{ recipe.difficulty }}</p>
-            <ul>
-                <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">{{ ingredient.name }} - {{ ingredient.quantity }}</li>
-            </ul>
+        <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card">
+            <div class="recipe_card_white">
+                <h2 class="text_black">{{ recipe.title }}</h2>
+                <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
+                <div class="buttons_card">
+                <button class="button_orange">Изменить</button>
+                <button class="button_gray" v-on:click="deleteRecipe(recipe.id)">Удалить</button>
+                </div>
+            </div>  
+            <div class="recipe_card_gray">
+                <p class="titel_paragraphe">Ингредиенты</p>
+                <ol class="white_text_small">
+                    <li v-for="ingredient in recipe.ingredients" :key="ingredient.id" class="list_style">
+                        {{ ingredient.name }} -
+                        {{ ingredient.quantity }}
+                    </li>
+                </ol>
+                <p class="titel_paragraphe">Время приготовления</p>
+                <p class="white_text_small">{{ Math.round(recipe.cookingTime / 60) }} минут</p>
+                <p class="titel_paragraphe">Сложность</p>
+                <p class="white_text_small">{{ recipe.difficulty }}</p>
+                <p class="titel_paragraphe">Рецепт</p>
+                <p class="white_text_small" id="instructions">{{ recipe.instructions }} </p>             
+            </div>
         </div>
     </div>
 </div>
@@ -60,77 +70,302 @@
     const recipeCardsApp = Vue.createApp({
         data() {
             return {
-                recipes: []
+                recipes: [],
+                filteredRecipes: [],
+                searchText: '',
+                ingredientCountFilter: '',
+                difficultyFilter: '', // Добавляем пустые значения по умолчанию для фильтров
+                timeFilter: ''
+             
             };
         },
         methods: {
             fetchRecipes() {
                 axios.get('http://hnt8.ru:8222/recipe')
                     .then(response => {
+                        console.log('Response from API:', response.data);
                         this.recipes = response.data;
+                        this.filterRecipes(); // Вызываем фильтрацию после получения данных
                     })
                     .catch(error => {
                         console.error('Ошибка при получении данных о рецептах:', error);
                     });
+            },
+            filterRecipes() {
+                let filtered = this.recipes;
+
+                // Применяем фильтр по уровню сложности
+                if (this.difficultyFilter) {
+                    filtered = filtered.filter(recipe => recipe.difficulty === this.difficultyFilter);
+                }
+
+                // Применяем фильтр по времени приготовления
+                if (this.timeFilter) {
+                    switch (this.timeFilter) {
+                        case 'moreThan10':
+                            filtered = filtered.filter(recipe => recipe.cookingTime > 10 * 60); // более 10 минут
+                            break;
+                        case 'moreThan30':
+                            filtered = filtered.filter(recipe => recipe.cookingTime > 30 * 60); // более 30 минут
+                            break;
+                        case 'moreThan60':
+                            filtered = filtered.filter(recipe => recipe.cookingTime > 60 * 60); // более часа
+                            break;
+                    }
+                }
+                // Применяем фильтр по количеству ингредиентов
+                if (this.ingredientCountFilter) {
+                    switch (this.ingredientCountFilter) {
+                        case 'moreThan3':
+                            filtered = filtered.filter(recipe => recipe.ingredients.length > 3);
+                            break;
+                        case 'moreThan5':
+                            filtered = filtered.filter(recipe => recipe.ingredients.length > 5);
+                            break;
+                        case 'moreThan10':
+                            filtered = filtered.filter(recipe => recipe.ingredients.length > 10);
+                            break;
+                        case 'moreThan15':
+                            filtered = filtered.filter(recipe => recipe.ingredients.length > 15);
+                            break;
+                        case 'moreThan20':
+                            filtered = filtered.filter(recipe => recipe.ingredients.length > 20);
+                            break;
+                        case 'moreThan25':
+                            filtered = filtered.filter(recipe => recipe.ingredients.length > 25);
+                            break;
+                    }
+                }
+                // Применяем фильтр по тексту
+                if (this.searchText) {
+                    const searchTextLC = this.searchText.toLowerCase().trim();
+                    filtered = filtered.filter(recipe => {
+                        const titleLC = recipe.title ? recipe.title.toLowerCase() : '';
+                        return titleLC.includes(searchTextLC);
+                    });
+                }
+
+                this.filteredRecipes = filtered;
+            },
+           
+        },
+        watch: {
+            searchText() {
+                this.filterRecipes();
+            },
+            difficultyFilter() {
+                this.filterRecipes(); // Вызываем фильтрацию при изменении уровня сложности
+            },
+            timeFilter() {
+                this.filterRecipes(); // Вызываем фильтрацию при изменении времени приготовления
+            },
+            ingredientCountFilter() {
+                this.filterRecipes();
             }
         },
         mounted() {
             this.fetchRecipes();
         }
     });
-
     recipeCardsApp.mount("#recipeCardsApp");
 </script>
 
-
 <style>
-    .div_filters{
+    .text_black{
+        justify-content: space-between;
+        text-decoration: none;
+        display: inline-block;
+        color: #000000;
+        font-family: Raleway;
+        font-size: 28px;
+        text-align: left;
+        margin-top: 60px;
+        font-weight: bold 300;
+    }
+    
+    .buttons_card{
+        display:flex;
+        flex-wrap:wrap;
+        gap: 10px;
+    }
+    .list_style{
+        margin-left: 18px;
+    }
+    .titel_paragraphe{
+        font-family:Raleway;
+        font-size:25px;
+        font-weight: bold 300;
+        color:#FFFFFF;
+    }
+
+    .white_text_small{
+        font-family: Raleway;
+        font-size: 17px;
+        color: #FFFFFF;
+        margin-top:10px;
+        margin-bottom:10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    
+    }
+
+    #instructions{
+        white-space: nowrap;
+    }
+    .recipe_card_app {
+        background: #FAFAFA;
+    }
+
+    .div_search {
+        margin-left: 72px;
+        margin-top: 91px;
+        width: calc(100% - 72px);
+    }
+
+    .search {
+        background: #FAFAFA;
+        font-family: Raleway;
+        font-size: 18px;
+        height: 56px;
+        text-align: center;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/*         width: calc(100% - 16px); */
+        width: 520px;
+    }
+
+    .div_filters {
         display: flex;
         flex-wrap: wrap;
         gap: 24px;
-        margin-left:72px;
+        margin-left: 72px;
         padding-top: 24px;
-        display: inline-block;
-    }
-    .recipe_card_white{
-        width:326px;
-        height:400px;
-        background: #FAFAFA;
     }
 
-    .recipe_card_gray{
-        width:299px;
-        height:400px;
+    .filters-container {
+        display: flex;
+        gap: 16px;
+    }
+
+    .button_orange {
+        font-family: Raleway;
+        font-size: 18px;
+        background-color: #E07901;
+        color: #FFFFFF;
+        border: none;
+        width: 145px;
+        height: 56px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        transition: transform.2s;
+    }
+
+        .button_orange:hover {
+            transform: scale(1.1);
+        }
+
+    .button_gray {
+        font-family: Raleway;
+        font-size: 18px;
+       /*  background-color: transparent; 
+        border: 2px solid #FFFFFF; */
+        color: #FFFFFF; 
         background: #262626;
-        opacity:85%;
+        opacity: 85%;
+        width: 145px;
+        height: 56px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        transition: transform.2s;
+        margin-top: auto;
     }
 
-    .recipe_ingredient_cards{
+        .button_gray:hover {
+            transform: scale(1.1);
+        }
+
+    .recipe_card_white {
+        width: 300px;
+        height: 400px;
+        background: #FAFAFA;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px;
+    }
+
+    .recipe_card_gray {
+        width: 270px;
+        height: 400px;
+        background: #262626;
+        opacity: 85%;
+        padding: 24px;
+        color: #FFFFFF;
+    }
+
+    .recipe-cards {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
-        padding-top: 24px;
+        gap: 30px;
+        margin: 80px 20px 80px 60px;
     }
-    .div_search{
-        display: inline-block;
-    }
-    .recipe_card{
-        background: #F1F1F1;
-        height: 100vh;
-        overflow-y: auto;
-    }
-    .filters{
-        background: #FAFAFA;
-        font-family: Raleway;
-        font-size:18px; 
-        heigh:46px;
-        width:200px;
-        text-align:center;
-        border:none;
+
+    .recipe-card {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    .filters {
+        background: #FAFAFA;
+        font-family: Raleway;
+        font-size: 18px;
+        height: 56px;
+        width: 200px;
+        text-align: center;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .recipe-photo {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        margin-bottom: 16px;
+    }
+
+
+
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            box-sizing: border-box;
+        }
+
+       
+
+   
 </style>
+
 
 
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration 

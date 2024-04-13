@@ -2,12 +2,16 @@
     ViewData["Title"] = "Личный Аккаунт";
 }
 <div id="profileApp">
+    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
     <div class="profile">
         <div class="profile_card">
             <div class="profile_white">
                 <h1 class="autorization_text"> Админитсратор</h1>
                 <img v-bind:src="user.image" class="profile_image" alt="Аватар" />
                 <p class="admin_name">{{user.name}}</p>
+
+                <p>@ViewBag.id</p>
+
                 <button class="save_changed" v-on:click="saveChanges">Сохранить изменения</button>
             </div>
 
@@ -46,7 +50,7 @@
                     phone: '',
                     createdAt: '',
                     password: '',
-                    image: ''
+                    imageUrl: ''
                 }
             };
         },
@@ -71,11 +75,6 @@
 
     profileApp.mount("#profileApp");
 </script>
-
-
-
-
-
 
 <style scoped>
     header {
