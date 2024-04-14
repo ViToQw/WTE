@@ -63,8 +63,13 @@
             },
             methods: {
                 AddIdUser(id) {
-                    const id_user = id;
-                    axios.get('/Account/SetIdUser/${id_user}')
+                    axios.get(`/account/SetUser?user_id=${id}`)
+                        .then(response => {
+                            console.log('User ID is set successfully.');
+                        })
+                        .catch(error => {
+                            console.error('There was a problem setting user ID:', error);
+                        });
                 },
                 login() {
                     this.showErrors = true;
@@ -87,6 +92,7 @@
                             if (user.admin !== false) {
                                 this.AddIdUser(user.id);
                                 window.location.href = '/RecipeCards/Index';  
+
                             } else {
                                 console.error('Пользователь не является администратором');
                                 this.loginError = true;

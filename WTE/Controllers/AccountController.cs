@@ -26,10 +26,12 @@ namespace WTE.Controllers
 
 
         [HttpGet]
+        [Route("account/SetUser")]
         public IActionResult SetIdUser(int user_id)
         {
             _config["Id_User"] = user_id.ToString();
             return Ok();
+
         }
         
     }

@@ -2,15 +2,15 @@
     ViewData["Title"] = "Личный Аккаунт";
 }
 <div id="profileApp">
-    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
     <div class="profile">
         <div class="profile_card">
             <div class="profile_white">
-                <h1 class="autorization_text"> Админитсратор</h1>
-                <img v-bind:src="user.image" class="profile_image" alt="Аватар" />
-                <p class="admin_name">{{user.name}}</p>
+                <h1 class="autorization_text"> Администратор</h1>
+                <img  v-bind:src="user.imageUrl" class="profile_image" alt="Аватар" />
+               @*  <p class="admin_name">{{ user.name }}</p> *@
 
-                <p>@ViewBag.id</p>
+              @*   <div id="app" :data-user-id="@ViewBag.id"></div> *@
+              @*   <p>@ViewBag.id</p> *@
 
                 <button class="save_changed" v-on:click="saveChanges">Сохранить изменения</button>
             </div>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="profile_info_block">
                     <p class="profile_info">Дата регистрации</p>
-                    <p class="profile_info">{{ user.createdAt }}</p>
+                    <p class="profile_info">{{ formatDate(user.createdAt) }}</p>
                 </div>
                 <div class="profile_info_block">
                     <p class="profile_info">Пароль</p>
@@ -41,35 +41,56 @@
 </div>
 
 
+
 <script>
+    const userId = @ViewBag.id;
     const profileApp = Vue.createApp({
+        el: '#app',
         data() {
             return {
                 user: {
+                    id: null,
                     name: '',
                     phone: '',
                     createdAt: '',
                     password: '',
                     imageUrl: ''
-                }
+                },
+                userId: userId, 
+                userData: null
             };
         },
         methods: {
             fetchUserData() {
                 axios.get('http://hnt8.ru:8222/account')
                     .then(response => {
-                        this.user = response.data;
+                        const userOn = response.data.find(user => user.id === this.userId);
+                        if (userOn) {
+                            this.user = userOn;
+                        } else {
+                            console.error('Пользователь с указанным userId не найден');
+                        }
                     })
                     .catch(error => {
                         console.error('Ошибка при получении данных с API:', error);
                     });
             },
-            saveChanges() {
-                console.log('Сохранение изменений...');
+            formatDate(dateString) {
+                // Создаем новый объект Date из строки даты
+                const date = new Date(dateString);
+                // Используем методы объекта Date для получения года, месяца и дня
+                const year = date.getFullYear();
+                // Месяцы начинаются с 0, поэтому добавляем 1
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                // Возвращаем отформатированную дату в виде строки
+                return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
             }
         },
         created() {
             this.fetchUserData();
+        },
+        mounted() {
         }
     });
 
@@ -82,8 +103,8 @@
     }
 
     #profileApp .profile_info_block {
-        display: flex; /* Добавляем свойство flex */
-        align-items: center; /* Выравниваем элементы по вертикали */
+        display: flex;
+        align-items: center; 
         margin-top: 20px;
     }
 
@@ -144,6 +165,11 @@
         font-size: 18px;
         font-family: Raleway;
         margin-right: 10px; 
+    }
+    .profile_image{
+        height: 300px;
+        display: block; 
+        margin: 0 auto;
     }
     
 </style>
