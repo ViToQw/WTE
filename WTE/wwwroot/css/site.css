@@ -98,6 +98,28 @@ html {
 }
 
 
+.button_transponent {
+    font-family: Raleway;
+    font-size: 18px;
+    background-color: transparent;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    background: #262626;
+    opacity: 85%;
+    height: 56px;
+    display: inline;
+    width: 190px;
+    text-align: center;
+    transition: transform .2s;
+    margin-top: 40px;
+    margin-left: 112px;
+    position: relative;
+}
+
+    .button_transponent:hover {
+        transform: scale(1.1);
+    }
+
 
 
 

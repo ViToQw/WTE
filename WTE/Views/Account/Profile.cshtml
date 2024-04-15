@@ -5,36 +5,31 @@
     <div class="profile">
         <div class="profile_card">
             <div class="profile_white">
-                <h1 class="autorization_text"> Администратор</h1>
+                <h1 class="admin_text"> Администратор</h1>
                 <img  v-bind:src="user.imageUrl" class="profile_image" alt="Аватар" />
-               @*  <p class="admin_name">{{ user.name }}</p> *@
-
-              @*   <div id="app" :data-user-id="@ViewBag.id"></div> *@
-              @*   <p>@ViewBag.id</p> *@
-
-                <button class="save_changed" v-on:click="saveChanges">Сохранить изменения</button>
+                <button class="save_change_profile" v-on:click="saveChanges">Сохранить изменения</button>
             </div>
 
             <div class="profile_gray">
-                <h1 class="white_text">Данные об аккаунте</h1>
+                <h1 class="white_text_profile">Данные об аккаунте</h1>
                 <div class="profile_info_block">
-                    <p class="profile_info">Имя</p>
+                    <p class="profile_info_change">Имя: </p>
                     <input v-model="user.name" class="input_info" placeholder="Введите имя" />
                 </div>
                 <div class="profile_info_block">
-                    <p class="profile_info">Телефон</p>
+                    <p class="profile_info_change">Телефон: </p>
                     <input v-model="user.phone" class="input_info" placeholder="Введите телефон" />
                 </div>
                 <div class="profile_info_block">
-                    <p class="profile_info">Дата регистрации</p>
-                    <p class="profile_info">{{ formatDate(user.createdAt) }}</p>
+                    <p class="profile_info_change">Дата регистрации: </p>
+                    <p class="profile_info_change">{{ formatDate(user.createdAt) }}</p>
                 </div>
                 <div class="profile_info_block">
-                    <p class="profile_info">Пароль</p>
+                    <p class="profile_info_change">Пароль: </p>
                     <input v-model="user.password" class="input_info" placeholder="Введите пароль" type="password" />
                 </div>
-                <button>Выйти из аккаунта</button>
-                <button>Удалить аккаунт</button>
+                <button class="button_transponent">Выйти из аккаунта</button>
+                <button class="button_transponent">Удалить аккаунт</button>
             </div>
         </div>
     </div>
@@ -76,16 +71,24 @@
                     });
             },
             formatDate(dateString) {
-                // Создаем новый объект Date из строки даты
                 const date = new Date(dateString);
-                // Используем методы объекта Date для получения года, месяца и дня
                 const year = date.getFullYear();
-                // Месяцы начинаются с 0, поэтому добавляем 1
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
-                // Возвращаем отформатированную дату в виде строки
                 return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+            },
+            saveChanges() {
+                axios.put(`http://hnt8.ru:8222/account`, this.user)
+                    .then(response => {
+                        console.log('Данные профиля успешно обновлены:', response.data);
+                        alert('Данные профиля успешно изменены');
+                        this.fetchUserData();
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при обновлении данных профиля:', error);
+                    });
             }
+
         },
         created() {
             this.fetchUserData();
@@ -102,6 +105,42 @@
         display: none;
     }
 
+    .admin_text{
+        text-decoration: none;
+        display: inline-block;
+        color: #000000;
+        font-family: Raleway;
+        font-size: 28px;
+        text-align: left;
+        margin-left: 60px;
+        margin-top: 60px;
+        font-weight: bold 300;
+        padding-left: 80px;
+        padding-bottom: 20px;
+    }
+
+    .button_transponent{
+        font-family: Raleway;
+        font-size: 18px;
+        background-color: transparent;
+        border: 2px solid #FFFFFF;
+        color: #FFFFFF;
+        background: #262626;
+        opacity: 85%;
+        height: 56px;
+        display: inline;
+        width: 190px;
+        text-align: center;
+        transition: transform .2s;
+        margin-top: 40px;
+        margin-left: 112px;
+        position: relative;
+    }
+
+        .button_transponent:hover {
+        transform: scale(1.1);
+    }
+
     #profileApp .profile_info_block {
         display: flex;
         align-items: center; 
@@ -116,6 +155,7 @@
             background-color: transparent;
             width: 200px;
             margin-right: 50px;
+            margin-top: 30px;
         }
 
     #profileApp .input_info::after {
@@ -160,17 +200,52 @@
         padding-top: 100px;
     }
 
-    .profile_info {
+    .profile_info_change {
         color: #FFFFFF;
         font-size: 18px;
         font-family: Raleway;
         margin-right: 10px; 
+        margin-left: 60px;
+        margin-top: 30px;
     }
     .profile_image{
         height: 300px;
         display: block; 
         margin: 0 auto;
     }
+
+    .white_text_profile{
+        justify-content: space-between;
+        text-decoration: none;
+        display: inline-block;
+        color: #FFFFFF;
+        font-family: Raleway;
+        font-size: 28px;
+        text-align: left;
+        margin-left: 220px;
+        margin-top: 60px;
+        font-weight: bold 300;
+    }
+    .save_change_profile{
+        font-family: Raleway;
+        font-size: 18px;
+        background-color: #E07901;
+        color: #FFFFFF;
+        border: none;
+        width: 240px;
+        height: 56px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        transition: transform .2s;
+        margin-left: 123px;
+        margin-top: 10px;
+    }
+
+        .save_change_profile:hover {
+        transform: scale(1.1);
+    }
+
     
 </style>
 
