@@ -15,7 +15,7 @@
    
 </head>
 <body>
-    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+   @*  @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
     <header class="site_header">
         <p class="logo">What To Eat?</p>       
         <nav>    
@@ -33,7 +33,35 @@
 
             }
         </nav>
+    </header> *@
+
+
+    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    }
+
+    <header class="site_header">
+        <p class="logo">What To Eat?</p>
+        <nav>
+            <a class="user_agreement @(currentAction == "UserAgreement" ? "active" : "")" href="/userAgreement">Пользовательское соглашение</a>
+            <a class="how_works @(currentController == "Home" && currentAction == "Index" ? "active" : "")" href="/howWorks">Как это работает</a>
+            <a class="recipes @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "")" href="/recipes">Рецепты</a>
+
+            @if (Configuration["IsAutorization"] != "false")
+            {
+                <a class="account @(currentController == "Account" && currentAction == "Profile" ? "active" : "")" href="/Account/Profile">Аккаунт</a>
+            }
+            else
+            {
+                <a class="account @(currentController == "Account" && currentAction == "Index" ? "active" : "")" href="/Account/Index">Аккаунт</a>
+            }
+        </nav>
     </header>
+
+
    
     <main>
       @*  <div class="mains_cards"> 

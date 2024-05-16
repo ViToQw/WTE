@@ -80,9 +80,9 @@
                     <div class="input_modal_form">
                         <p class="text_white_modal">Выбор уровня сложности:</p>
                         <select v-model="newRecipe.difficulty" class="filters_modal">
-                            <option value="Easy">Легко</option>
-                            <option value="Medium">Средне</option>
-                            <option value="Hard">Сложно</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
                         </select>
 
                         <p text_white_modal>Поле для ввода рецепта:</p>
@@ -107,7 +107,7 @@
                             <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
                                 {{ ingredient.name }}
                                 <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
-                                <button class="remove-ingredient-button" v-on:click="removeIngredient(ingredient)">Удалить</button>
+                                <button class="button_transponent" v-on:click="removeIngredient(ingredient)">Удалить</button>
                                 
                             </li>
                         </ul>
@@ -139,47 +139,44 @@
                     <div class="input_modal_form">
                         <p class="text_white_modal">Выбор уровня сложности:</p>
                         <select v-model="editedRecipe.difficulty" class="filters_modal">
-                            <option value="Easy">Легко</option>
-                            <option value="Medium">Средне</option>
-                            <option value="Hard">Сложно</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
                         </select>
 
-                        <p text_white_modal>Поле для ввода рецепта:</p>
+                        <p class="text_white_modal">Поле для ввода рецепта:</p>
                         <textarea v-model="editedRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
 
-                        <p text_white_modal>Время приготовления (в минутах):</p>
+                        <p class="text_white_modal">Время приготовления (в минутах):</p>
                         <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
 
                         <!-- Выбор ингредиентов -->
-                        <p text_white_modal>Выберите ингредиенты для рецепта:</p>
+                        <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
                         <select v-model="selectedIngredient" class="filters_modal">
                             <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
                         </select>
-                        <button v-on:click="addIngredient" class="add-ingredient-button">Добавить</button>
+                        <button v-on:click="addIngredient" class="button_transponent">Добавить</button>
                     </div>
-
 
                     <!-- Список выбранных ингредиентов -->
                     <div class="selected-ingredients">
-                        <ul v-if="editedRecipe.ingredients.length > 0">
-                            <li v-for="ingredient in editedRecipe.ingredients" :key="ingredient.id" class="text_white_modal">
+                        <p class="text_white_modal" v-if="selectedIngredients.length === 0">Нет выбранных ингредиентов</p>
+                        <ul v-else>
+                            <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
                                 {{ ingredient.name }}
                                 <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
-                                <button class="remove-ingredient-button" v-on:click="removeIngredient(ingredient)">Удалить</button>
+                                <button class="button_transponent" v-on:click="removeIngredient(ingredient)">Удалить</button>
+
                             </li>
                         </ul>
-                        <p class="text_white_modal" v-else>Нет выбранных ингредиентов</p>
                     </div>
-                    <button class="button_transponent" v-on:click="addNewRecipe">Добавить блюдо</button>
+                    <button class="button_transponent" v-on:click="updateRecipe">Изменить блюдо</button>
                 </div>
 
             </div>
 
         </div>
     </div>
-
-
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -206,9 +203,9 @@
                 ingredients: [],
                 selectedIngredient: null,
                 newIngredientName: '',
-                selectedIngredients: [], 
+                selectedIngredients: [],
 
-                showEditModal: false, 
+                showEditModal: false,
                 editedRecipe: null
             };
         },
@@ -232,7 +229,6 @@
                     .catch(error => {
                         console.error('Ошибка при получении списка ингредиентов:', error);
                     });
-
             },
             filterRecipes() {
                 let filtered = this.recipes;
@@ -308,7 +304,6 @@
                     alert('Пожалуйста, заполните все поля');
                 }
             },
-
             deleteRecipe(recipeId) {
                 axios.delete(`http://hnt8.ru:8222/recipe?id=${recipeId}`)
                     .then(response => {
@@ -319,14 +314,13 @@
                         console.error('Ошибка при удалении рецепта:', error);
                     });
             },
-
             addNewIngredient() {
                 if (this.newIngredientName) {
                     axios.post('http://hnt8.ru:8222/ingredient', { name: this.newIngredientName })
                         .then(response => {
                             console.log('Новый ингредиент успешно добавлен:', response.data);
+                            this.newIngredientName = ''; // Очистка поля ввода
                             this.fetchIngredients();
-                            this.newIngredientName = '';
                         })
                         .catch(error => {
                             console.error('Ошибка при добавлении нового ингредиента:', error);
@@ -334,7 +328,8 @@
                 } else {
                     alert('Пожалуйста, введите название нового ингредиента');
                 }
-            },
+            }
+            ,
             fetchIngredients() {
                 axios.get('http://hnt8.ru:8222/ingredient')
                     .then(response => {
@@ -345,10 +340,9 @@
                         console.error('Ошибка при получении списка ингредиентов:', error);
                     });
             },
-
             addIngredient() {
                 if (this.selectedIngredient && !this.newRecipe.ingredients.some(ingredient => ingredient.id === this.selectedIngredient.id)) {
-                    const ingredientWithQuantity = { ...this.selectedIngredient, quantity: 1 }; // Добавляем свойство quantity со значением по умолчанию
+                    const ingredientWithQuantity = { ...this.selectedIngredient, quantity: 1 };
                     this.newRecipe.ingredients.push(ingredientWithQuantity);
                     this.selectedIngredients.push(ingredientWithQuantity);
                     this.selectedIngredient = null;
@@ -367,20 +361,51 @@
             minutesToSeconds(minutes) {
                 return minutes * 60;
             },
-            secondsToMinutes(minutes) {
-                return minutes / 60;
+            secondsToMinutes(seconds) {
+                return seconds / 60;
             },
-
             openEditModal(recipe) {
                 this.editedRecipe = { ...recipe };
-                this.editedRecipe.cookingTime = Math.round(recipe.cookingTime / 60);
-                this.showEditModal = true; 
-
+                this.editedRecipe.cookingTime = this.secondsToMinutes(recipe.cookingTime);
+                this.showEditModal = true;
             },
-
             closeEditModal() {
-                this.editedRecipe = null; // Сброс данных редактируемого рецепта
-                this.showEditModal = false; // Закрытие модального окна
+                this.editedRecipe = null;
+                this.showEditModal = false;
+            },
+            updateRecipe() {
+                console.log('Метод updateRecipe вызван');
+                console.log('editedRecipe:', this.editedRecipe);
+
+                if (!this.editedRecipe.id) {
+                    console.error('ID рецепта отсутствует');
+                    return;
+                }
+
+                if (this.editedRecipe.title && this.editedRecipe.imageUrl && this.editedRecipe.cookingTime && this.editedRecipe.difficulty && this.editedRecipe.instructions && this.editedRecipe.ingredients.length > 0) {
+                    const recipeData = {
+                        ...this.editedRecipe,
+                        cookingTime: this.minutesToSeconds(this.editedRecipe.cookingTime)
+                    };
+                    console.log('Отправляемые данные:', recipeData);
+                    const url = `http://hnt8.ru:8222/recipe`;
+                    console.log('URL для запроса:', url);
+
+                    axios.put(url, recipeData)
+                        .then(response => {
+                            console.log('Блюдо успешно изменено:', response.data);
+                            this.showEditModal = false;
+                            this.fetchRecipes();
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при изменении блюда:', error);
+                            if (error.response) {
+                                console.error('Детали ошибки:', error.response.data);
+                            }
+                        });
+                } else {
+                    alert('Пожалуйста, заполните все поля');
+                }
             }
         },
         watch: {
@@ -401,6 +426,7 @@
             this.fetchRecipes();
         }
     });
+
     recipeCardsApp.mount("#recipeCardsApp");
 </script>
 
