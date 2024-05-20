@@ -68,6 +68,7 @@
             <h1 class="text_black_modal">Добавление нового блюда</h1>
 
             <div class="modal-form">
+                <!-- Левая колонка -->
                 <div class="modal_card_white">
                     <input v-model="newRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
                     <input v-model="newRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
@@ -76,8 +77,11 @@
                     <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
                     <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
                 </div>
+
+                <!-- Правая колонка -->
                 <div class="modal_card_gray">
                     <div class="input_modal_form">
+                        <!-- Выбор уровня сложности -->
                         <p class="text_white_modal">Выбор уровня сложности:</p>
                         <select v-model="newRecipe.difficulty" class="filters_modal">
                             <option value="Easy">Easy</option>
@@ -85,77 +89,20 @@
                             <option value="Hard">Hard</option>
                         </select>
 
-                        <p text_white_modal>Поле для ввода рецепта:</p>
+                        <!-- Поле для ввода рецепта -->
+                        <p class="text_white_modal">Поле для ввода рецепта:</p>
                         <textarea v-model="newRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
 
-                        <p text_white_modal>Время приготовления (в минутах):</p>
-                        <input v-model.number="newRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
-
-                        <!-- Выбор ингредиентов -->
-                        <p text_white_modal>Выберите ингредиенты для рецепта:</p>
-                        <select v-model="selectedIngredient" class="filters_modal">
-                            <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
-                        </select>
-                        <button v-on:click="addIngredient" class="add-ingredient-button">Добавить</button>
-                    </div>
-                    
-
-                    <!-- Список выбранных ингредиентов -->
-                    <div class="selected-ingredients">
-                        <p class="text_white_modal" v-if="selectedIngredients.length === 0">Нет выбранных ингредиентов</p>
-                        <ul v-else>
-                            <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
-                                {{ ingredient.name }}
-                                <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
-                                <button class="button_transponent" v-on:click="removeIngredient(ingredient)">Удалить</button>
-                                
-                            </li>
-                        </ul>
-                    </div>
-                    <button class="button_transponent" v-on:click="addNewRecipe">Добавить блюдо</button>
-                </div>
-
-            </div>
-     
-        </div>
-    </div>
-
-    <!-- Модальное окно изменения -->
-    <div class="modal" v-if="showEditModal">
-        <div class="modal-content">
-            <span class="close" v-on:click="closeEditModal">&times;</span>
-            <h1 class="text_black_modal">Изменение блюда</h1>
-
-            <div class="modal-form">
-                <div class="modal_card_white">
-                    <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
-                    <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
-                    <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" />
-                    <p class="text_black">Добавление нового ингредиента</p>
-                    <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
-                    <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
-                </div>
-                <div class="modal_card_gray">
-                    <div class="input_modal_form">
-                        <p class="text_white_modal">Выбор уровня сложности:</p>
-                        <select v-model="editedRecipe.difficulty" class="filters_modal">
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
-                        </select>
-
-                        <p class="text_white_modal">Поле для ввода рецепта:</p>
-                        <textarea v-model="editedRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
-
+                        <!-- Время приготовления -->
                         <p class="text_white_modal">Время приготовления (в минутах):</p>
-                        <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
+                        <input v-model.number="newRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
 
                         <!-- Выбор ингредиентов -->
                         <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
                         <select v-model="selectedIngredient" class="filters_modal">
                             <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
                         </select>
-                        <button v-on:click="addIngredient" class="button_transponent">Добавить</button>
+                        <button v-on:click="addIngredient" class="add-ingredient-button">Добавить</button>
                     </div>
 
                     <!-- Список выбранных ингредиентов -->
@@ -165,19 +112,79 @@
                             <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
                                 {{ ingredient.name }}
                                 <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
-                                <button class="button_transponent" v-on:click="removeIngredient(ingredient)">Удалить</button>
-
+                                <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
                             </li>
                         </ul>
                     </div>
-                    <button class="button_transponent" v-on:click="updateRecipe">Изменить блюдо</button>
+                    <button class="button_transparent" v-on:click="addNewRecipe">Добавить блюдо</button>
                 </div>
-
             </div>
-
         </div>
     </div>
+
+
+    <!-- Модальное окно изменения -->
+<div class="modal" v-if="showEditModal">
+    <div class="modal-content">
+        <span class="close" v-on:click="closeEditModal">&times;</span>
+        <h1 class="text_black_modal">Изменение блюда</h1>
+
+        <div class="modal-form">
+            <!-- Левая колонка -->
+            <div class="modal_card_white">
+                <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
+                <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
+                <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" />
+                <p class="text_black">Добавление нового ингредиента</p>
+                <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
+                <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
+            </div>
+
+            <!-- Правая колонка -->
+            <div class="modal_card_gray">
+                <div class="input_modal_form">
+                    <!-- Выбор уровня сложности -->
+                    <p class="text_white_modal">Выбор уровня сложности:</p>
+                    <select v-model="editedRecipe.difficulty" class="filters_modal">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+
+                    <!-- Поле для ввода рецепта -->
+                    <p class="text_white_modal">Поле для ввода рецепта:</p>
+                    <textarea v-model="editedRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
+
+                    <!-- Время приготовления -->
+                    <p class="text_white_modal">Время приготовления (в минутах):</p>
+                    <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
+
+                    <!-- Выбор ингредиентов -->
+                    <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
+                    <select v-model="selectedIngredient" class="filters_modal">
+                        <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
+                    </select>
+                    <button v-on:click="addIngredient" class="button_transparent">Добавить</button>
+                </div>
+
+                <!-- Список выбранных ингредиентов -->
+                <div class="selected-ingredients">
+                    <p class="text_white_modal" v-if="selectedIngredients.length === 0">Нет выбранных ингредиентов</p>
+                    <ul v-else>
+                        <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
+                            {{ ingredient.name }}
+                            <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
+                            <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
+                        </li>
+                    </ul>
+                </div>
+                <button class="button_transparent" v-on:click="updateRecipe">Изменить блюдо</button>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
@@ -201,12 +208,15 @@
                     ingredients: []
                 },
                 ingredients: [],
-                selectedIngredient: null,
+                selectedIngredient: null,ы
                 newIngredientName: '',
                 selectedIngredients: [],
 
                 showEditModal: false,
-                editedRecipe: null
+                editedRecipe: null,
+
+                // Новое свойство для хранения доступных ингредиентов
+                availableIngredients: []
             };
         },
         methods: {
@@ -328,8 +338,7 @@
                 } else {
                     alert('Пожалуйста, введите название нового ингредиента');
                 }
-            }
-            ,
+            },
             fetchIngredients() {
                 axios.get('http://hnt8.ru:8222/ingredient')
                     .then(response => {
@@ -340,12 +349,16 @@
                         console.error('Ошибка при получении списка ингредиентов:', error);
                     });
             },
+            updateFilteredIngredients() {
+                this.filteredIngredients = this.ingredients.filter(ingredient => !this.selectedIngredients.some(selected => selected.id === ingredient.id));
+            },
             addIngredient() {
-                if (this.selectedIngredient && !this.newRecipe.ingredients.some(ingredient => ingredient.id === this.selectedIngredient.id)) {
+                if (this.selectedIngredient) {
                     const ingredientWithQuantity = { ...this.selectedIngredient, quantity: 1 };
-                    this.newRecipe.ingredients.push(ingredientWithQuantity);
                     this.selectedIngredients.push(ingredientWithQuantity);
+                    this.editedRecipe.ingredients.push({ ...ingredientWithQuantity });
                     this.selectedIngredient = null;
+                    this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
                 }
             },
             removeIngredient(ingredientToRemove) {
@@ -353,10 +366,11 @@
                 if (index !== -1) {
                     this.selectedIngredients.splice(index, 1);
                 }
-                const indexInRecipe = this.newRecipe.ingredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
+                const indexInRecipe = this.editedRecipe.ingredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
                 if (indexInRecipe !== -1) {
-                    this.newRecipe.ingredients.splice(indexInRecipe, 1);
+                    this.editedRecipe.ingredients.splice(indexInRecipe, 1);
                 }
+                this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
             },
             minutesToSeconds(minutes) {
                 return minutes * 60;
@@ -368,10 +382,31 @@
                 this.editedRecipe = { ...recipe };
                 this.editedRecipe.cookingTime = this.secondsToMinutes(recipe.cookingTime);
                 this.showEditModal = true;
+
+                // Загрузка списка выбранных ингредиентов
+                this.selectedIngredients = this.editedRecipe.ingredients.map(ingredient => ({ ...ingredient }));
+                // Загрузка списка доступных ингредиентов
+                this.fetchIngredients();
             },
             closeEditModal() {
                 this.editedRecipe = null;
                 this.showEditModal = false;
+            },
+            updateEditedIngredients() {
+                // Очищаем список ингредиентов в объекте editedRecipe
+                this.editedRecipe.ingredients = [];
+
+                // Добавляем каждый ингредиент из selectedIngredients в список ингредиентов editedRecipe
+                this.selectedIngredients.forEach(ingredient => {
+                    // Создаем копию ингредиента, чтобы избежать проблем с ссылками
+                    const editedIngredient = { ...ingredient };
+                    // Удаляем свойство quantity, если оно пустое, чтобы не отправлять его на сервер
+                    if (!editedIngredient.quantity) {
+                        delete editedIngredient.quantity;
+                    }
+                    // Добавляем ингредиент в список ингредиентов объекта editedRecipe
+                    this.editedRecipe.ingredients.push(editedIngredient);
+                });
             },
             updateRecipe() {
                 console.log('Метод updateRecipe вызван');
@@ -383,12 +418,15 @@
                 }
 
                 if (this.editedRecipe.title && this.editedRecipe.imageUrl && this.editedRecipe.cookingTime && this.editedRecipe.difficulty && this.editedRecipe.instructions && this.editedRecipe.ingredients.length > 0) {
+                    // Обновляем список ингредиентов в объекте editedRecipe перед отправкой на сервер
+                    this.updateEditedIngredients();
+
                     const recipeData = {
                         ...this.editedRecipe,
                         cookingTime: this.minutesToSeconds(this.editedRecipe.cookingTime)
                     };
                     console.log('Отправляемые данные:', recipeData);
-                    const url = `http://hnt8.ru:8222/recipe`;
+                    const url = `http://hnt8.ru:8222/recipe`; // Используем id рецепта для обновления
                     console.log('URL для запроса:', url);
 
                     axios.put(url, recipeData)
@@ -426,7 +464,6 @@
             this.fetchRecipes();
         }
     });
-
     recipeCardsApp.mount("#recipeCardsApp");
 </script>
 
@@ -717,12 +754,8 @@
 
     .selected-ingredients{
         height:auto;
-        overflow-y: auto
+        overflow-y: scroll;
     }
-
-
-        
-   
 </style>
 
 <link href="/css/site.css" rel="stylesheet" />
