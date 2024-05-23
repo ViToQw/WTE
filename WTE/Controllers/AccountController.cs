@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using WTE.Models;
 
@@ -16,6 +17,7 @@ namespace WTE.Controllers
         {
             return View();
         }
+
 
         [Route("account/profile")]
         public IActionResult Profile()

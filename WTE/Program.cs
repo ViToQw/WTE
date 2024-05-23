@@ -69,3 +69,4 @@ app.UseEndpoints(endpoints =>
         defaults: new { controller = "Account", action = "Profile" });
 });
 
+

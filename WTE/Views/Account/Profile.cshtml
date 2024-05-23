@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Личный Аккаунт";
 }
-<div id="profileApp">
+@* <div id="profileApp">
     <div class="profile">
         <div class="profile_card">
             <div class="profile_white">
@@ -98,7 +98,108 @@
     });
 
     profileApp.mount("#profileApp");
+</script> *@
+
+
+<div id="profileApp">
+    <div class="profile">
+        <div class="profile_card">
+            <div class="profile_white">
+                <h1 class="admin_text">{{ userRole === 'admin' ? 'Администратор' : 'Пользователь' }}</h1>
+                <img v-bind:src="user.imageUrl" class="profile_image" alt="Аватар" />
+                <button class="save_change_profile" v-on:click="saveChanges">Сохранить изменения</button>
+            </div>
+
+            <div class="profile_gray">
+                <h1 class="white_text_profile">Данные об аккаунте</h1>
+                <div class="profile_info_block">
+                    <p class="profile_info_change">Имя: </p>
+                    <input v-model="user.name" class="input_info" placeholder="Введите имя" />
+                </div>
+                <div class="profile_info_block">
+                    <p class="profile_info_change">Телефон: </p>
+                    <input v-model="user.phone" class="input_info" placeholder="Введите телефон" />
+                </div>
+                <div class="profile_info_block">
+                    <p class="profile_info_change">Дата регистрации: </p>
+                    <p class="profile_info_change">{{ formatDate(user.createdAt) }}</p>
+                </div>
+                <div class="profile_info_block" v-if="userRole === 'admin'">
+                    <p class="profile_info_change">Пароль: </p>
+                    <input v-model="user.password" class="input_info" placeholder="Введите пароль" type="password" />
+                </div>
+                <button class="button_transponent">Выйти из аккаунта</button>
+                <button class="button_transponent">Удалить аккаунт</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const userId = @ViewBag.id;
+    const profileApp = Vue.createApp({
+        el: '#profileApp',
+        data() {
+            return {
+                user: {
+                    id: null,
+                    name: '',
+                    phone: '',
+                    createdAt: '',
+                    password: '',
+                    imageUrl: ''
+                },
+                userId: userId,
+                userRole: '', // Добавляем поле для хранения роли пользователя
+                userData: null
+            };
+        },
+        methods: {
+            fetchUserData() {
+                axios.get('http://hnt8.ru:8222/account')
+                    .then(response => {
+                        const userData = response.data.find(user => user.id === this.userId);
+                        if (userData) {
+                            this.user = userData;
+                            this.userRole = userData.admin ? 'admin' : 'user'; // Устанавливаем роль пользователя в зависимости от поля admin
+                        } else {
+                            console.error('Пользователь с указанным userId не найден');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении данных с API:', error);
+                    });
+            },
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+            },
+            saveChanges() {
+                axios.put(`http://hnt8.ru:8222/account`, this.user)
+                    .then(response => {
+                        console.log('Данные профиля успешно обновлены:', response.data);
+                        alert('Данные профиля успешно изменены');
+                        this.fetchUserData();
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при обновлении данных профиля:', error);
+                    });
+            }
+
+        },
+        created() {
+            this.fetchUserData();
+        },
+        mounted() {
+        }
+    });
+
+    profileApp.mount("#profileApp");
 </script>
+
 
 <style scoped>
     header {
