@@ -30,8 +30,8 @@
         <div class="filters-container">
             <input class="search" placeholder="Поиск" v-model="searchText" />
         </div>
-        <div class="new_dish" v-if="user.admin === true">
-            <button class="button_orange" v-if="user.admin === true">Добавить новое блюдо</button>
+        <div class="new_dish" v-if="userRole === 'admin'">
+            <button class="button_orange" v-if="userRole === 'admin'">Добавить новое блюдо</button>
         </div>
     </div>
     <div class="recipe-cards">
@@ -39,7 +39,7 @@
             <div class="recipe_card_white">
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
-                <div class="buttons_card" v-if="user.admin === true">
+                <div class="buttons_card" v-if="userRole === 'admin'">
                     <button class="button_orange" v-on:click="openEditModal(recipe)">Изменить</button>
                     <button class="button_gray" v-on:click="deleteRecipe(recipe.id)">Удалить</button>
                 </div>
@@ -160,7 +160,8 @@
 <script src="https://unpkg.com/vue@next"></script>
 <script>
    //добавила
-    const userId = document.getElementById('recipeCardsApp').getAttribute('data-user-id');
+    const userId = @ViewBag.id;
+    // const userId = @Html.Raw(Json.Serialize(ViewBag.id));
 
     const recipeCardsApp = Vue.createApp({
         data() {
@@ -183,19 +184,22 @@
                 ingredients: [],
                 selectedIngredient: null, 
                 newIngredientName: '',
-                selectedIngredients: [],
+                selectedIngredients: [], 
                 showEditModal: false,
                 editedRecipe: null,
                 availableIngredients: [],
 
+                userRole: '',
+                userId: userId,
+
                 user: {
-                    id: userId,
+                    id: null,
                     name: '',
                     phone: '',
                     createdAt: '',
                     password: '',
                     imageUrl: '',
-                    admin: false // Добавляем поле admin для хранения роли
+                    admin: true // Добавляем поле admin для хранения роли
                 }
 
             };
@@ -221,19 +225,17 @@
                         console.error('Ошибка при получении списка ингредиентов:', error);
                     });
             },
-
-
-
-
             fetchUserData() {
                 axios.get('http://hnt8.ru:8222/account')
                     .then(response => {
                         console.log('User data from API:', response.data);
                         if (Array.isArray(response.data)) {
-                            const userData = response.data.find(user => user.id == this.user.id);
+                            const userData = response.data.find(user => user.id == this.userId);
                             if (userData) {
                                 this.user = userData; // Устанавливаем данные пользователя
-                                this.user.admin = userData.admin === true; // Проверяем статус администратора
+
+                                this.userRole = userData.admin ? 'admin' : 'user';
+                                // this.user.admin = userData.admin === true;
                                 console.log('User admin status:', this.user.admin); // Логируем статус админа
                             } else {
                                 console.error('Пользователь с указанным id не найден');
@@ -246,27 +248,6 @@
                         console.error('Ошибка при получении данных с сервера:', error);
                     });
             },
-            // fetchUserData() {
-            //     axios.get('http://hnt8.ru:8222/account')
-            //         .then(response => {
-            //             const userData = response.data.find(user => user.id === this.user.id);
-            //             if (userData) {
-            //                 this.user = userData; // Устанавливаем данные пользователя
-            //                 // Проверяем, является ли пользователь администратором и устанавливаем соответствующее значение
-            //                 this.user.admin = userData.admin === true;
-            //             } else {
-            //                 console.error('Пользователь с указанным id не найден');
-            //             }
-            //         })
-            //         .catch(error => {
-            //             console.error('Ошибка при получении данных с сервера:', error);
-            //         });
-            // },
-
-
-
-           
-
             filterRecipes() {
                 let filtered = this.recipes;
                 if (this.difficultyFilter) {

@@ -5,15 +5,20 @@ namespace WTE.Controllers
 {
     public class RecipeCards : Controller
     {
-        // GET: RecipeCards
+        private readonly IConfiguration _config;
+        public RecipeCards(IConfiguration config)
+        {
+            _config=config;
+        }
+
         public ActionResult Index()
         {
+            ViewBag.id= _config["Id_User"];
             return View();
         }
 
         public IActionResult GoToProfile()
         {
-            // Перенаправление на действие Profile контроллера Account
             return RedirectToAction("Profile", "Account");
         }
 
