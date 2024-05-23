@@ -124,64 +124,64 @@
 
 
     <!-- Модальное окно изменения -->
-<div class="modal" v-if="showEditModal">
-    <div class="modal-content">
-        <span class="close" v-on:click="closeEditModal">&times;</span>
-        <h1 class="text_black_modal">Изменение блюда</h1>
+    <div class="modal" v-if="showEditModal">
+        <div class="modal-content">
+            <span class="close" v-on:click="closeEditModal">&times;</span>
+            <h1 class="text_black_modal">Изменение блюда</h1>
 
-        <div class="modal-form">
-            <!-- Левая колонка -->
-            <div class="modal_card_white">
-                <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
-                <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
-                <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" />
-                <p class="text_black">Добавление нового ингредиента</p>
-                <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
-                <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
-            </div>
-
-            <!-- Правая колонка -->
-            <div class="modal_card_gray">
-                <div class="input_modal_form">
-                    <!-- Выбор уровня сложности -->
-                    <p class="text_white_modal">Выбор уровня сложности:</p>
-                    <select v-model="editedRecipe.difficulty" class="filters_modal">
-                        <option value="Easy">Easy</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Hard">Hard</option>
-                    </select>
-
-                    <!-- Поле для ввода рецепта -->
-                    <p class="text_white_modal">Поле для ввода рецепта:</p>
-                    <textarea v-model="editedRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
-
-                    <!-- Время приготовления -->
-                    <p class="text_white_modal">Время приготовления (в минутах):</p>
-                    <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
-
-                    <!-- Выбор ингредиентов -->
-                    <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
-                    <select v-model="selectedIngredient" class="filters_modal">
-                        <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
-                    </select>
-                    <button v-on:click="addIngredient" class="button_transparent">Добавить</button>
+            <div class="modal-form">
+                <!-- Левая колонка -->
+                <div class="modal_card_white">
+                    <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
+                    <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
+                    <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" />
+                    <p class="text_black">Добавление нового ингредиента</p>
+                    <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
+                    <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
                 </div>
 
-                <!-- Список выбранных ингредиентов -->
-                <div class="selected-ingredients">
-                    <p class="text_white_modal" v-if="selectedIngredients.length === 0">Нет выбранных ингредиентов</p>
-                    <ul v-else>
-                        <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
-                            {{ ingredient.name }}
-                            <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
-                            <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
-                        </li>
-                    </ul>
+                <!-- Правая колонка -->
+                <div class="modal_card_gray">
+                    <div class="input_modal_form">
+                        <!-- Выбор уровня сложности -->
+                        <p class="text_white_modal">Выбор уровня сложности:</p>
+                        <select v-model="editedRecipe.difficulty" class="filters_modal">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+
+                        <!-- Поле для ввода рецепта -->
+                        <p class="text_white_modal">Поле для ввода рецепта:</p>
+                        <textarea v-model="editedRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
+
+                        <!-- Время приготовления -->
+                        <p class="text_white_modal">Время приготовления (в минутах):</p>
+                        <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
+
+                        <!-- Выбор ингредиентов -->
+                        <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
+                        <select v-model="selectedIngredient" class="filters_modal">
+                            <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
+                        </select>
+                        <button v-on:click="addIngredient" class="button_transparent">Добавить</button>
+                    </div>
+
+                    <!-- Список выбранных ингредиентов -->
+                    <div class="selected-ingredients">
+                        <p class="text_white_modal" v-if="selectedIngredients.length === 0">Нет выбранных ингредиентов</p>
+                        <ul v-else>
+                            <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
+                                {{ ingredient.name }}
+                                <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
+                                <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <button class="button_transparent" v-on:click="updateRecipe">Изменить блюдо</button>
                 </div>
-                <button class="button_transparent" v-on:click="updateRecipe">Изменить блюдо</button>
             </div>
         </div>
-    </div>
     </div>
 </div>
 
@@ -208,7 +208,7 @@
                     ingredients: []
                 },
                 ingredients: [],
-                selectedIngredient: null,ы
+                selectedIngredient: null, 
                 newIngredientName: '',
                 selectedIngredients: [],
 
@@ -466,6 +466,7 @@
     });
     recipeCardsApp.mount("#recipeCardsApp");
 </script>
+
 
 <style>
     .filters_modal{
