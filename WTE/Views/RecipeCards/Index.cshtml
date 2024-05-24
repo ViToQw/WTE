@@ -20,6 +20,7 @@
             <select class="filters" v-model="ingredientCountFilter">
                 <option value="">Все ингредиенты</option>
                 <option value="moreThan3">Более 3 ингредиентов</option>
+
                 <option value="moreThan5">Более 5 ингредиентов</option>
                 <option value="moreThan10">Более 10 ингредиентов</option>
                 <option value="moreThan15">Более 15 ингредиентов</option>
@@ -460,6 +461,14 @@
         mounted() {
             this.fetchRecipes();
             this.fetchUserData();
+            //добавила для ассинхронный запрос
+            Promise.all([this.fetchRecipes(), this.fetchUserData()])
+                .then(() => {
+                    console.log('Все данные успешно загружены');
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке данных:', error);
+                });
 
         }
     });
