@@ -32,19 +32,34 @@
             <input class="search" placeholder="Поиск" v-model="searchText" />
         </div>
         <div class="new_dish" v-if="userRole === 'admin'">
-            <button class="button_orange" v-if="userRole === 'admin'">Добавить новое блюдо</button>
+            <button class="button_orange" v-on:click="showModal = true" v-if="userRole === 'admin'">Добавить новое блюдо</button>
         </div>
+        @* Избранное для пользователя *@
+        <div class="filters-container">
+            <button class="button_orange" v-if="userRole !== 'admin'" v-on:click="showFavorites">Избранные</button>
+            <button class="button_orange" v-if="userRole !== 'admin'" v-on:click="showAllRecipes">Показать все блюда</button>
+        </div>
+
     </div>
     <div class="recipe-cards">
         <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card">
             <div class="recipe_card_white">
+
+                <button class="favorite-button" v-on:click="toggleFavorite(recipe.id)">
+                    <img v-if="recipe.isFavorite"  src="~/Content/Images/icons8-heart-red.png"  alt="Favorite Icon" class="favorite-icon">
+                    <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
+                </button>
+
+
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
                 <div class="buttons_card" v-if="userRole === 'admin'">
                     <button class="button_orange" v-on:click="openEditModal(recipe)">Изменить</button>
                     <button class="button_gray" v-on:click="deleteRecipe(recipe.id)">Удалить</button>
                 </div>
+               
             </div>
+
             <div class="recipe_card_gray">
                 <p class="titel_paragraphe">Ингредиенты</p>
                 <ol class="white_text_small">
@@ -201,7 +216,11 @@
                     password: '',
                     imageUrl: '',
                     admin: true // Добавляем поле admin для хранения роли
-                }
+                },
+                // Для избранного
+                favorites: [],
+                showAll: true
+
 
             };
         },
@@ -226,18 +245,20 @@
                         console.error('Ошибка при получении списка ингредиентов:', error);
                     });
             },
+
+            
+
             fetchUserData() {
-                axios.get('http://hnt8.ru:8222/account')
+       
+                return axios.get('http://hnt8.ru:8222/account')
                     .then(response => {
                         console.log('User data from API:', response.data);
                         if (Array.isArray(response.data)) {
                             const userData = response.data.find(user => user.id == this.userId);
                             if (userData) {
-                                this.user = userData; // Устанавливаем данные пользователя
-
+                                this.user = userData;
                                 this.userRole = userData.admin ? 'admin' : 'user';
-                                // this.user.admin = userData.admin === true;
-                                console.log('User admin status:', this.user.admin); // Логируем статус админа
+                                console.log('User admin status:', this.user.admin);
                             } else {
                                 console.error('Пользователь с указанным id не найден');
                             }
@@ -249,6 +270,24 @@
                         console.error('Ошибка при получении данных с сервера:', error);
                     });
             },
+            //добавила 
+            saveUserId(userId) {
+                this.userId = userId;
+                this.fetchUserData()
+                    .then(() => {
+                        console.log('Данные о пользователе успешно загружены');
+                        this.resetApp(); // Перезапускаем приложение после загрузки данных о пользователе
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке данных о пользователе:', error);
+                    });
+            },
+            resetApp() {
+                this.fetchRecipes();
+                this.filterRecipes();
+            },
+
+
             filterRecipes() {
                 let filtered = this.recipes;
                 if (this.difficultyFilter) {
@@ -365,7 +404,7 @@
                 if (this.selectedIngredient) {
                     const ingredientWithQuantity = { ...this.selectedIngredient, quantity: 1 };
                     this.selectedIngredients.push(ingredientWithQuantity);
-                    this.editedRecipe.ingredients.push({ ...ingredientWithQuantity });
+                    this.newRecipe.ingredients.push(ingredientWithQuantity); // Добавляем ингредиент в newRecipe.ingredients
                     this.selectedIngredient = null;
                     this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
                 }
@@ -442,8 +481,93 @@
                 } else {
                     alert('Пожалуйста, заполните все поля');
                 }
+            },
+
+            // Избранное
+            showFavorites() {
+                this.filteredRecipes = this.recipes.filter(recipe => this.favorites.includes(recipe.id));
+                this.showAll = false; // Обновляем флаг отображения
+            },
+            showAllRecipes() {
+                this.filteredRecipes = this.recipes;
+                this.showAll = true; // Обновляем флаг отображения
+            },
+            fetchFavorites() {
+                axios.get(`http://hnt8.ru:8222/favorites/${this.userId}/recipes`)
+                    .then(response => {
+                        console.log('Избранные рецепты:', response.data);
+                        this.favorites = response.data.map(favorite => favorite.recipeGetDTO.id);
+                        this.filterRecipes(); // Фильтруем рецепты после загрузки избранных
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении избранных рецептов:', error);
+                    });
+            },
+            toggleFavorite(recipeId) {
+                const isCurrentlyFavorite = this.isFavorite(recipeId);
+                const url = `http://hnt8.ru:8222/favorites/${this.userId}/recipes/${recipeId}`;
+                if (isCurrentlyFavorite) {
+                    axios.delete(url)
+                        .then(response => {
+                            console.log('Рецепт удален из избранного:', response.data);
+                            this.removeFavoriteLocally(recipeId);
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при удалении рецепта из избранного:', error);
+                        });
+                } else {
+                    axios.post(url)
+                        .then(response => {
+                            console.log('Рецепт добавлен в избранное:', response.data);
+                            this.addFavoriteLocally(recipeId);
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при добавлении рецепта в избранное:', error);
+                        });
+                }
+            },
+           
+            updateRecipeFavorites() {
+                this.recipes.forEach(recipe => {
+                    recipe.isFavorite = this.isFavorite(recipe.id);
+                });
+                this.filterRecipes();
+            },
+            loadFavorites() {
+                axios.get(`http://hnt8.ru:8222/favorite/${this.userId}`)
+                    .then(response => {
+                        this.favorites = response.data.map(favorite => favorite.recipeId);
+                        this.updateRecipeFavorites();
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении избранных рецептов:', error);
+                    });
+            },
+
+
+            isFavorite(recipeId) {
+                return this.favorites.includes(recipeId);
+            },
+            addFavoriteLocally(recipeId) {
+                this.favorites.push(recipeId);
+                this.filterRecipes(); // Обновляем список рецептов после изменения избранного
+            },
+            removeFavoriteLocally(recipeId) {
+                const index = this.favorites.indexOf(recipeId);
+                if (index !== -1) {
+                    this.favorites.splice(index, 1);
+                    this.filterRecipes(); // Обновляем список рецептов после изменения избранного
+                }
             }
+            
         },
+        created() {
+            this.fetchUserData().then(() => {
+                this.fetchRecipes();
+                this.loadFavorites();
+            });
+        },
+
         watch: {
             searchText() {
                 this.filterRecipes();
@@ -465,34 +589,36 @@
             Promise.all([this.fetchRecipes(), this.fetchUserData()])
                 .then(() => {
                     console.log('Все данные успешно загружены');
+
                 })
                 .catch(error => {
                     console.error('Ошибка при загрузке данных:', error);
                 });
 
+
         }
     });
     recipeCardsApp.component('recipe-card', {
         props: ['recipe', 'isAdmin'],
-        template: `
-                    <div class="recipe-card">
-                        <h3>{{ recipe.title }}</h3>
-                        <img :src="recipe.imageUrl" alt="Recipe Image">
-                        <p>Time: {{ recipe.cookingTime / 60 }} minutes</p>
-                        <p>Difficulty: {{ recipe.difficulty }}</p>
-                        <p>Instructions: {{ recipe.instructions }}</p>
-                        <ul>
-                            <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">
-                                {{ ingredient.name }} - {{ ingredient.quantity }}
-                            </li>
-                        </ul>
-                        <div v-if="isAdmin">
-                                <button v-on:click="$emit('edit', recipe)">Edit</button>
-                                <button v-on:click="$emit('delete', recipe.id)">Delete</button>
+        template: ` <div class="recipe-card">
+                            <h3>{{ recipe.title }}</h3>
+                            <img :src="recipe.imageUrl" alt="Recipe Image">
+                            <p>Time: {{ recipe.cookingTime / 60 }} minutes</p>
+                            <p>Difficulty: {{ recipe.difficulty }}</p>
+                            <p>Instructions: {{ recipe.instructions }}</p>
+                            <ul>
+                                <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">
+                                    {{ ingredient.name }} - {{ ingredient.quantity }}
+                                </li>
+                            </ul>
+                            <div v-if="isAdmin">
+                                    <button v-on:click="$emit('edit', recipe)">Edit</button>
+                                    <button v-on:click="$emit('delete', recipe.id)">Delete</button>
+                            </div>
                         </div>
-                    </div>
                 `
     });
+    
     recipeCardsApp.mount("#recipeCardsApp");
 </script>
 
@@ -786,6 +912,16 @@
         height:auto;
         overflow-y: scroll;
     }
+
+    .favorite-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    right: 10px;
+    top: 10px;
+    }
+
 </style>
 
 <link href="/css/site.css" rel="stylesheet" />

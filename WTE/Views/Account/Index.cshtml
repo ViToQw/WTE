@@ -9,11 +9,13 @@
                 <h1 class="autorization_text">Авторизация</h1>
             </div>
             <div class="autorization_div">
-                <input class="autorization_input_text" placeholder="Введите телефон" v-model="phone_number" />
+                <input class="autorization_input_text" placeholder="Введите телефон" maxlength="20" v-model="phone_number" />
                 <span v-if="showErrors && !phone_number" class="error">Введите телефон</span>
             </div>
             <div class="autorization_div">
-                <input type="password" class="autorization_input_text" placeholder="Введите пароль" v-model="password" />
+                <input type="password" class="autorization_input_text" placeholder="Введите пароль" maxlength="20" v-model="password" id="password-input" name="password" />
+                <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+
                 <span v-if="showErrors && !password" class="error">Введите пароль</span>
                 <span v-if="showErrors && loginError" class="error">Неверный логин или пароль</span>
             </div>
@@ -44,9 +46,53 @@
         font-family:Raleway;
         
     }
+
+    .password {
+        width: 300px;
+        margin: 15px auto;
+        position: relative;
+    }
+
+    #password-input {
+        padding: 5px 0;
+        line-height: 40px;
+        text-indent: 10px;
+        margin: 0 0 15px 0;
+       
+        font-size: 18px;
+    }
+
+    .password-control {
+        position: relative;
+        top: 4px;
+        right: 30px;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: url(https://snipp.ru/demo/495/view.svg) 0 0 no-repeat;
+    }
+
+        .password-control.view {
+            background: url(https://snipp.ru/demo/495/no-view.svg) 0 0 no-repeat;
+        }
+
 </style>
 @section Scripts{
     <script>
+
+        function show_hide_password(target) {
+            var input = document.getElementById('password-input');
+            if (input.getAttribute('type') == 'password') {
+                target.classList.add('view');
+                input.setAttribute('type', 'text');
+            } else {
+                target.classList.remove('view');
+                input.setAttribute('type', 'password');
+            }
+            return false;
+        }
+
+
         const app = Vue.createApp({
             data() {
                 return {
@@ -98,6 +144,7 @@
         app.mount("#vueapp");
     </script>
 }
+
 
 
 
