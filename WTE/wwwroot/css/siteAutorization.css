@@ -36,7 +36,7 @@
     width: 186px;
     height: 56px;
     position: relative;
-    padding-right: 40px; /* Увеличили отступ для arrow */
+    padding-right: 40px; 
     overflow: hidden;
     text-align: left;
     padding-left: 21px;
@@ -83,3 +83,24 @@
     margin-top: 40px;
     text-indent: 10px;
 }
+
+
+.registration_button {
+    font-family: Raleway;
+    font-size: 18px;
+    background-color: transparent;
+    color: #FFFFFF;
+    border: 2px solid #FFFFFF;
+    width: 251px;
+    height: 56px;
+    position: relative;
+    padding-right: 40px;
+    overflow: hidden;
+    text-align: left;
+    padding-left: 21px;
+    transition: transform.2s;
+}
+
+    .registration_button:hover {
+        transform: scale(1.1);
+    }

@@ -103,6 +103,7 @@ a {
     background-image: url('../Content/Images/Authorization.png');
     height: 900px;
     min-height: 900px;
+    background-size: contain;
 }
 html {
     box-sizing:border-box;
@@ -150,6 +151,11 @@ html {
     .button_transponent:hover {
         transform: scale(1.1);
     }
+
+.registration_div_input {
+    margin-top: 18px;
+    margin-left: 49px;
+}
 
 
 

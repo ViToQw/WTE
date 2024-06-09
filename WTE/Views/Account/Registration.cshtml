@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Регистрация";
+}
+<div class="overlap" id="vueapp">
+    <div class="registration_card">
+        @* Белая карточка *@
+        <div class="regisatrtion_white">
+            <div>
+                <h1 class="autorization_text">Регистрация</h1>
+            </div>
+            <div class="registration_div_input">
+                <input class="registration_input_text" placeholder="Введите имя" maxlength="20" v-model="name" />
+                <span v-if="showErrors && !name" class="error">Введите имя</span>
+            </div>
+
+            <div class="registration_div_input">
+                <input class="registration_input_text" placeholder="Введите телефон" maxlength="20" v-model="phone_number" />
+                <span v-if="showErrors && !phone_number" class="error">Введите телефон</span>
+            </div>
+
+            <div class="registration_div_input">
+                <input class="registration_input_text" placeholder="Введите пароль" maxlength="20" v-model="password" id="password-input" :type="passwordVisible ? 'text' : 'password'" name="password" />
+                <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                <span v-if="showErrors && !password" class="error">Введите пароль</span>
+            </div>
+            <div class="registration_div_input">
+                <input class="registration_input_text" placeholder="Повторите пароль" maxlength="20" v-model="password_two" id="password-input-two" :type="passwordVisible ? 'text' : 'password'" name="password" />
+                <span v-if="showErrors && password !== password_two" class="error">Пароли не совпадают</span>
+            </div>
+            <div class="registration_div_input">
+                <button class="registrations_button" v-on:click="register">Зарегистрироваться <span class="arrow"> >> </span> </button>
+            </div>
+
+        </div>
+        <div class="registration_black">
+            <h1 class="white_text">What To Eat?</h1>
+            <div class="description">
+                <p>На сайте вы найдете все необходимые инструменты для создания, редактирования и удаления рецептов, а также для организации своего аккаунта.</p>
+                <p>Благодаря разнообразным опциям фильтрации по сложности, времени приготовления и другим критериям, вы сможете легко находить нужные рецепты в любой момент времени.</p>
+                <button class="registration_button" v-on:click=" goToLogin">Войти <span class="arrow"> >> </span> </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    header {
+        display: none;
+    }
+
+    .error {
+        color: red;
+        display: block;
+        margin-top: 5px;
+        font-family: Raleway;
+    }
+
+    .password {
+        width: 300px;
+        margin: 15px auto;
+        position: relative;
+    }
+
+    #password-input {
+       
+        line-height: 40px;
+        text-indent: 10px;
+        margin: 0 0 0 0;
+        font-size: 18px;
+    }
+
+    #password-input-two {
+        line-height: 40px;
+        text-indent: 10px;
+        margin: 0 0 0 0;
+        font-size: 18px;
+    }
+
+    .password-control {
+        position: relative;
+        top: 4px;
+        right: 30px;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-top: 20px;
+        background: url(https://snipp.ru/demo/495/view.svg) 0 0 no-repeat;
+    }
+
+        .password-control.view {
+            background: url(https://snipp.ru/demo/495/no-view.svg) 0 0 no-repeat;
+        }
+
+    .registrations_button {
+        font-family: Raleway;
+        font-size: 18px;
+        background-color: #E07901;
+        color: #FFFFFF;
+        border: none;
+        width: 281px;
+        height: 56px;
+        position: relative;
+        padding-right: 40px;
+        overflow: hidden;
+        text-align: left;
+        padding-left: 21px;
+        transition: transform .2s;
+        
+    }
+    .registrations_button:hover {
+        transform: scale(1.1);
+    }
+
+    .registration_input_text {
+        border-style: solid;
+        border-color: #B7B7B7;
+        background-color: transparent;
+        font-size: 18px;
+        font-family: Raleway;
+        text-align: center;
+        text-align: left;
+        width: 325px;
+        height: 50px;
+    }
+
+
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+        display: none;
+    }
+
+    input[type="password"]::-webkit-credentials-auto-fill-button {
+        display: none;
+    }
+
+    input[type="password"]::-webkit-clear-button {
+        display: none;
+    }
+
+    input[type="password"]::-webkit-inner-spin-button,
+    input[type="password"]::-webkit-outer-spin-button {
+        display: none;
+        margin: 0;
+    }
+
+</style>
+@section Scripts{
+<script>
+
+        function show_hide_password(target) {
+            var input1 = document.getElementById('password-input');
+            var input2 = document.getElementById('password-input-two');
+
+            if (input1.getAttribute('type') === 'password' && input2.getAttribute('type') === 'password') {
+                target.classList.add('view');
+                input1.setAttribute('type', 'text');
+                input2.setAttribute('type', 'text');
+            } else {
+                target.classList.remove('view');
+                input1.setAttribute('type', 'password');
+                input2.setAttribute('type', 'password');
+            }
+            return false;
+        }
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    name: '',
+                    phone_number: '',
+                    password: '',
+                    password_two: '',
+                    showErrors: false,
+                    registrationError: false,
+                    registrationSuccess: false,
+                }
+            },
+            methods: {
+                goToLogin() {
+                    window.location.href = '/Account/Index';
+                },
+                togglePasswordVisibility() {
+                    this.passwordVisible = !this.passwordVisible;
+                },
+                register() {
+                    this.showErrors = true;
+                    this.registrationError = false;
+                    this.registrationSuccess = false;
+
+                    if (!this.name || !this.phone_number || !this.password || !this.password_two || this.password !== this.password_two) {
+                        return;
+                    }
+
+                    axios.get('http://hnt8.ru:8222/account')
+                        .then(response => {
+                            const existingUser = response.data.find(user => user.phone === this.phone_number);
+                            if (existingUser) {
+                                console.log('Пользователь с указанным телефоном уже существует', response.data);
+                                this.registrationError = true;
+                                return;
+                            }
+
+                            axios.post('http://hnt8.ru:8222/account', {
+                                name: this.name,
+                                phone: this.phone_number,
+                                password: this.password,
+                                admin: false
+                            })
+                                .then(response => {
+                                    console.log('Пользователь успешно зарегистрирован');
+                                    this.registrationSuccess = true;
+                                    setTimeout(() => {
+                                        window.location.href = '/Account/Index';
+                                    }, 2000);
+                                })
+                                .catch(error => {
+                                    console.error('Ошибка при регистрации пользователя:', error);
+                                    this.registrationError = true;
+                                });
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при проверке данных пользователя:', error);
+                            this.registrationError = true;
+                        });
+                }
+            }
+        });
+        app.mount("#vueapp");
+</script>
+}

@@ -486,18 +486,18 @@
             // Избранное
             showFavorites() {
                 this.filteredRecipes = this.recipes.filter(recipe => this.favorites.includes(recipe.id));
-                this.showAll = false; // Обновляем флаг отображения
+                this.showAll = false;
             },
             showAllRecipes() {
                 this.filteredRecipes = this.recipes;
-                this.showAll = true; // Обновляем флаг отображения
+                this.showAll = true; 
             },
             fetchFavorites() {
                 axios.get(`http://hnt8.ru:8222/favorites/${this.userId}/recipes`)
                     .then(response => {
                         console.log('Избранные рецепты:', response.data);
                         this.favorites = response.data.map(favorite => favorite.recipeGetDTO.id);
-                        this.filterRecipes(); // Фильтруем рецепты после загрузки избранных
+                        this.filterRecipes(); 
                     })
                     .catch(error => {
                         console.error('Ошибка при получении избранных рецептов:', error);
@@ -550,13 +550,13 @@
             },
             addFavoriteLocally(recipeId) {
                 this.favorites.push(recipeId);
-                this.filterRecipes(); // Обновляем список рецептов после изменения избранного
+                this.filterRecipes(); 
             },
             removeFavoriteLocally(recipeId) {
                 const index = this.favorites.indexOf(recipeId);
                 if (index !== -1) {
                     this.favorites.splice(index, 1);
-                    this.filterRecipes(); // Обновляем список рецептов после изменения избранного
+                    this.filterRecipes(); 
                 }
             }
             

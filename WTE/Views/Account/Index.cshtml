@@ -29,7 +29,7 @@
             <div class="description">
                 <p>На сайте вы найдете все необходимые инструменты для создания, редактирования и удаления рецептов, а также для организации своего аккаунта.</p>
                 <p>Благодаря разнообразным опциям фильтрации по сложности, времени приготовления и другим критериям, вы сможете легко находить нужные рецепты в любой момент времени.</p>
-                <p>What To Eat? предоставляет возможность создавать собственные фильтры и настраивать их, обеспечивая гибкость и удобство в поиске рецептов.</p>
+                <button class="registration_button" v-on:click="registration_button">Зарегистрироваться <span class="arrow"> >> </span> </button>
             </div>
         </div>
     </div>
@@ -91,8 +91,6 @@
             }
             return false;
         }
-
-
         const app = Vue.createApp({
             data() {
                 return {
@@ -113,6 +111,11 @@
                             console.error('There was a problem setting user ID:', error);
                         });
                 },
+
+                registration_button() {
+                    window.location.href = '/Account/Registration';
+                },
+                
                 login() {
                     this.showErrors = true;
                     if (!this.phone_number || !this.password) {
