@@ -7,9 +7,12 @@
             <div class="profile_white">
                 <h1 class="admin_text">{{ userRole === 'admin' ? 'Администратор' : 'Пользователь' }}</h1>
                 <img v-bind:src="user.imageUrl" class="profile_image" alt="Аватар" />
+              @*   Добавила для ввода фото *@
+                <input type="file" v-on:change="handleFileUpload" />
+                <button class="save_change_profile" v-on:click="uploadFile">Загрузить фото</button>
+
                 <button class="save_change_profile" v-on:click="saveChanges">Сохранить изменения</button>
             </div>
-
             <div class="profile_gray">
                 <h1 class="white_text_profile">Данные об аккаунте</h1>
                 <div class="profile_info_block">
@@ -51,10 +54,32 @@
                 },
                 userId: userId,
                 userRole: '', // Добавляем поле для хранения роли пользователя
-                userData: null
+                userData: null,
+                selectedFile: null //добавила поле для хранения фото
             };
         },
         methods: {
+
+
+            //Добавила логику для фото
+            handleFileUpload(event) {
+                this.selectedFile = event.target.files[0];
+            },
+            uploadFile() {
+                const formData = new FormData();
+                formData.append('file', this.selectedFile);
+
+                axios.post('/upload', formData)
+                    .then(response => {
+                        console.log('Файл успешно загружен:', response.data.url);
+                        this.user.imageUrl = response.data.url; // Сохранить URL изображения в профиле пользователя
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке файла:', error);
+                    });
+            },
+
+
             fetchUserData() {
                 axios.get('http://hnt8.ru:8222/account')
                     .then(response => {

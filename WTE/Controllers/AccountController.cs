@@ -39,8 +39,33 @@ namespace WTE.Controllers
             return Ok();
 
         }
-        
-    }
-    
 
+
+        /*код для фото пользователя*/
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file provided");
+            }
+
+            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploads))
+            {
+                Directory.CreateDirectory(uploads);
+            }
+
+            var filePath = Path.Combine(uploads, file.FileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var fileUrl = $"/uploads/{file.FileName}"; // URL для сохраненного файла
+            return Ok(new { url = fileUrl });
+        }
+
+    }
     }

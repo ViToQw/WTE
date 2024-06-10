@@ -42,11 +42,11 @@
 
     </div>
     <div class="recipe-cards">
-        <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card">
+        <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card" >
             <div class="recipe_card_white">
 
                 <button class="favorite-button" v-on:click="toggleFavorite(recipe.id)">
-                    <img v-if="recipe.isFavorite"  src="~/Content/Images/icons8-heart-red.png"  alt="Favorite Icon" class="favorite-icon">
+                    <img v-if="isFavorite(recipe.id)" src="~/Content/Images/icons8-heart-red.png" alt="Favorite Icon" class="favorite-icon">
                     <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
                 </button>
 
@@ -60,7 +60,7 @@
                
             </div>
 
-            <div class="recipe_card_gray">
+            <div class="recipe_card_gray" v-on:click="openRecipeDetailsModal(recipe)">
                 <p class="titel_paragraphe">Ингредиенты</p>
                 <ol class="white_text_small">
                     <li v-for="ingredient in recipe.ingredients" :key="ingredient.id" class="list_style">
@@ -124,6 +124,33 @@
             </div>
         </div>
     </div>
+
+    <!-- Модальное окно для отображения деталей блюда -->
+    <div class="modal" v-if="showRecipeDetailsModal">
+        <div class="modal-content">
+            <span class="close" v-on:click="closeRecipeDetailsModal">&times;</span>
+            <h1 class="text_black_modal">{{ selectedRecipe.title }}</h1>
+
+            <div class="modal-form">
+                <div class="modal_card_white">
+                    <img :src="selectedRecipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
+                </div>
+                <div class="modal_card_gray">
+                    <p><strong>Ингредиенты:</strong></p>
+                    <ul>
+                        <li v-for="ingredient in selectedRecipe.ingredients" :key="ingredient.id">
+                            {{ ingredient.name }} - {{ ingredient.quantity }}
+                        </li>
+                    </ul>
+                    <p><strong>Время приготовления:</strong> {{ Math.round(selectedRecipe.cookingTime / 60) }} минут</p>
+                    <p><strong>Сложность:</strong> {{ selectedRecipe.difficulty }}</p>
+                    <p><strong>Рецепт:</strong></p>
+                    <p>{{ selectedRecipe.instructions }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно изменения -->
     <div class="modal" v-if="showEditModal">
         <div class="modal-content">
@@ -219,7 +246,9 @@
                 },
                 // Для избранного
                 favorites: [],
-                showAll: true
+                showAll: true,
+                showRecipeDetailsModal: false,
+                selectedRecipe: null
 
 
             };
@@ -503,9 +532,23 @@
                         console.error('Ошибка при получении избранных рецептов:', error);
                     });
             },
+
+
+            // ...существующие методы...
+            openRecipeDetailsModal(recipe) {
+                this.selectedRecipe = recipe;
+                this.showRecipeDetailsModal = true;
+            },
+            closeRecipeDetailsModal() {
+                this.selectedRecipe = null;
+                this.showRecipeDetailsModal = false;
+            },
+
             toggleFavorite(recipeId) {
                 const isCurrentlyFavorite = this.isFavorite(recipeId);
                 const url = `http://hnt8.ru:8222/favorites/${this.userId}/recipes/${recipeId}`;
+                console.log(`Toggle favorite for recipe ${recipeId} for user ${this.userId}`);
+
                 if (isCurrentlyFavorite) {
                     axios.delete(url)
                         .then(response => {
@@ -514,6 +557,9 @@
                         })
                         .catch(error => {
                             console.error('Ошибка при удалении рецепта из избранного:', error);
+                            if (error.response) {
+                                console.error('Ответ сервера:', error.response.data);
+                            }
                         });
                 } else {
                     axios.post(url)
@@ -523,6 +569,9 @@
                         })
                         .catch(error => {
                             console.error('Ошибка при добавлении рецепта в избранное:', error);
+                            if (error.response) {
+                                console.error('Ответ сервера:', error.response.data);
+                            }
                         });
                 }
             },
