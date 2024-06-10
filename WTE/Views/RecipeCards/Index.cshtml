@@ -403,19 +403,30 @@
             },
             addNewIngredient() {
                 if (this.newIngredientName) {
-                    axios.post('http://hnt8.ru:8222/ingredient', { name: this.newIngredientName })
-                        .then(response => {
-                            console.log('Новый ингредиент успешно добавлен:', response.data);
-                            this.newIngredientName = ''; // Очистка поля ввода
-                            this.fetchIngredients();
-                        })
-                        .catch(error => {
-                            console.error('Ошибка при добавлении нового ингредиента:', error);
-                        });
-                } else {
-                    alert('Пожалуйста, введите название нового ингредиента');
+
+                    const exists = this.ingredients.some(ingredient => ingredient.name === this.newIngredientName);
+                    if (!exists) {
+
+                        axios.post('http://hnt8.ru:8222/ingredient', { name: this.newIngredientName })
+                            .then(response => {
+                                console.log('Новый ингредиент успешно добавлен:', response.data);
+                                this.newIngredientName = ''; // Очистка поля ввода
+                                this.fetchIngredients();
+                            })
+                            .catch(error => {
+                                console.error('Ошибка при добавлении нового ингредиента:', error);
+                            });
+                    }
+                    else {
+                        alert('Ингредиент уже существует');
+                    }
                 }
+
+                else {
+                    alert('Пожалуйста, введите название нового ингредиента');
+                     }
             },
+
             fetchIngredients() {
                 axios.get('http://hnt8.ru:8222/ingredient')
                     .then(response => {
@@ -434,6 +445,13 @@
                     const ingredientWithQuantity = { ...this.selectedIngredient, quantity: 1 };
                     this.selectedIngredients.push(ingredientWithQuantity);
                     this.newRecipe.ingredients.push(ingredientWithQuantity); // Добавляем ингредиент в newRecipe.ingredients
+
+                    //Добавила для исчезнавения из выпадающего спсика выбранного ингредиента
+                    const index = this.ingredients.findIndex(ingredient => ingredient.id === this.selectedIngredient.id);
+                    if (index !== -1) {
+                        this.ingredients.splice(index, 1);
+                    }
+
                     this.selectedIngredient = null;
                     this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
                 }
@@ -442,12 +460,15 @@
                 const index = this.selectedIngredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
                 if (index !== -1) {
                     this.selectedIngredients.splice(index, 1);
+                    this.newRecipe.ingredients.splice(index, 1);
+                    this.ingredients.push(ingredientToRemove);
                 }
-                const indexInRecipe = this.editedRecipe.ingredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
-                if (indexInRecipe !== -1) {
-                    this.editedRecipe.ingredients.splice(indexInRecipe, 1);
-                }
-                this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
+                this.updateFilteredIngredients();
+                // const indexInRecipe = this.editedRecipe.ingredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
+                // if (indexInRecipe !== -1) {
+                //     this.editedRecipe.ingredients.splice(indexInRecipe, 1);
+                // }
+                // this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
             },
             minutesToSeconds(minutes) {
                 return minutes * 60;
@@ -583,7 +604,7 @@
                 this.filterRecipes();
             },
             loadFavorites() {
-                axios.get(`http://hnt8.ru:8222/favorite/${this.userId}`)
+                axios.get(`http://hnt8.ru:8222/favorites/${this.userId}/recipes`)
                     .then(response => {
                         this.favorites = response.data.map(favorite => favorite.recipeId);
                         this.updateRecipeFavorites();
