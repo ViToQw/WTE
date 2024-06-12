@@ -20,7 +20,7 @@ pipeline {
         stage('Docker-Compose Start') {
             steps {
                 script {
-                    sh 'docker compose -f docker-compose-wte-site.yml up -d'
+                    sh 'docker compose -f WTE/docker-compose-wte-site.yml up -d'
                 }
             }
         }
