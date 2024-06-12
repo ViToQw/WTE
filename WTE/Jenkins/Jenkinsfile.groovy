@@ -1,7 +1,7 @@
 ﻿pipeline {
     agent any
   environment {
-    MAVEN_ARGS=" -e clean install"
+    BUILD_CONFIGURATION = 'Release'
     registry = ""
     dockerContainerName = 'wte'
     dockerImageName = 'wte-image'
@@ -9,9 +9,9 @@
   stages {
     stage('Build') {
        steps {
-   withMaven(maven: 'MAVEN_ENV') {
-            sh "mvn ${MAVEN_ARGS}"
-        }
+                sh 'dotnet restore'
+                sh 'dotnet build --configuration $BUILD_CONFIGURATION'
+                sh 'dotnet publish --configuration $BUILD_CONFIGURATION --output ./publish'
        }
     }
 
