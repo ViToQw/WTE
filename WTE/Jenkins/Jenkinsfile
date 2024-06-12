@@ -7,16 +7,6 @@ pipeline {
         dockerImageName = 'wte-image'
     }
     stages {
-        stage('Build') {
-            steps {
-                script {
-                    sh 'dotnet restore'
-                    sh 'dotnet build --configuration $BUILD_CONFIGURATION'
-                    sh 'dotnet publish --configuration $BUILD_CONFIGURATION --output ./publish'
-                }
-            }
-        }
-
         stage('Clean Container') {
             steps {
                 script {
