@@ -8,10 +8,12 @@
             <div>
                 <h1 class="autorization_text">Авторизация</h1>
             </div>
+
             <div class="autorization_div">
                 <input class="autorization_input_text" placeholder="Введите телефон" maxlength="20" v-model="phone_number" />
                 <span v-if="showErrors && !phone_number" class="error">Введите телефон</span>
             </div>
+
             <div class="autorization_div">
                 <input type="password" class="autorization_input_text" placeholder="Введите пароль" maxlength="20" v-model="password" id="password-input" name="password" />
                 <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
@@ -19,6 +21,7 @@
                 <span v-if="showErrors && !password" class="error">Введите пароль</span>
                 <span v-if="showErrors && loginError" class="error">Неверный логин или пароль</span>
             </div>
+
             <div class="autorization_div">
                 <button class="logIn" v-on:click="login">Войти <span class="arrow"> >> </span> </button>
             </div>
