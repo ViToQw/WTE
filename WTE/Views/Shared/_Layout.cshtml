@@ -15,27 +15,6 @@
    
 </head>
 <body>
-   @*  @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
-    <header class="site_header">
-        <p class="logo">What To Eat?</p>       
-        <nav>    
-            <a class="user_agreement" href="/userAgreement">Пользовательское соглашение</a>
-            <a href="/howWorks">Как это работает</a>
-            <a href="/recipes">Рецепты</a>
-          
-            @if (Configuration["IsAutorization"] != "false")
-            {
-                <a href="/Account/Profile">Аккаунт</a>
-            }
-            else
-            {
-                <a href="/Account/Index">Аккаунт</a>
-
-            }
-        </nav>
-    </header> *@
-
-
     @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
     @{
@@ -47,59 +26,29 @@
         <p class="logo">What To Eat?</p>
         <nav>
             <a class="user_agreement @(currentAction == "UserAgreement" ? "active" : "")" href="/userAgreement">Пользовательское соглашение</a>
-            <a class="how_works @(currentController == "Home" && currentAction == "Index" ? "active" : "")" href="/howWorks">Как это работает</a>
-            <a class="recipes @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "")" href="/recipes">Рецепты</a>
+            <a class="how_works @(currentController == "Home" && currentAction == "Index" ? "active" : "")" href="/Home/Index">Как это работает</a>
+
+           @*  <a class="recipes @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "")" href="/recipes">Рецепты</a> *@
 
             @if (Configuration["IsAutorization"] != "false")
             {
+                <a class="recipes" @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "") href="/RecipeCards/Index">Рецепты</a>
                 <a class="account @(currentController == "Account" && currentAction == "Profile" ? "active" : "")" href="/Account/Profile">Аккаунт</a>
             }
             else
             {
                 <a class="account @(currentController == "Account" && currentAction == "Index" ? "active" : "")" href="/Account/Index">Аккаунт</a>
+                
+                
             }
         </nav>
     </header>
-
-
-   
     <main>
-      @*  <div class="mains_cards"> 
-           <div class="card">
-                <p>
-                    Возможность добавлять
-                    новые блюда
-                </p>
-           </div>
-           <div class="card">
-                <p>
-                    Множество
-                    рецептов
-                </p>
-           </div>
-           <div class="card">
-               <p>
-                    Возможность добавлять
-                    новые блюда
-               </p>
-           </div>
-            <div class="card">
-                <p>
-                    Возможность редактировать 
-                    рецепты
-                </p>
-            </div>
-            <div class="card">
-                <p>
-                    Возможность удалять блюда
-                </p>
-            </div>
-       </div> *@
 
         @RenderBody()
         @RenderSection("Scripts", required: false)
     </main>
-   
 </body>
 </html>
+
 

@@ -275,8 +275,6 @@
                     });
             },
 
-            
-
             fetchUserData() {
        
                 return axios.get('http://hnt8.ru:8222/account')
@@ -369,30 +367,73 @@
                 }
                 this.filteredRecipes = filtered;
             },
+
+
+            normalizeString(str) {
+                if (typeof str === 'string') {
+                    return str.trim().toLowerCase();
+                }
+                return '';
+            },
+            //Добавляю метод для проверки на уникальность блюда
+            checkDuplicateTitle(newRecipe) {
+                for (const recipe of this.recipes) {
+                    if (this.normalizeString(recipe.title) === this.normalizeString(newRecipe.title)) {
+                        alert('Блюдо с таким названием уже существует');
+                        return false;
+                    }
+                }
+                return true;
+            },
             addNewRecipe() {
                 if (this.newRecipe.title && this.newRecipe.imageUrl && this.newRecipe.cookingTime && this.newRecipe.difficulty && this.newRecipe.instructions && this.newRecipe.ingredients.length > 0) {
-                    this.newRecipe.cookingTime = this.minutesToSeconds(this.newRecipe.cookingTime);
-                    axios.post('http://hnt8.ru:8222/recipe', this.newRecipe)
-                        .then(response => {
-                            console.log('Блюдо успешно добавлено:', response.data);
-                            this.fetchRecipes();
-                            this.showModal = false;
-                            this.newRecipe = {
-                                title: '',
-                                imageUrl: '',
-                                cookingTime: null,
-                                difficulty: '',
-                                instructions: '',
-                                ingredients: []
-                            };
-                            this.selectedIngredients = [];
-                        })
-                        .catch(error => {
-                            console.error('Ошибка при добавлении блюда:', error);
-                        });
+                    if (this.checkDuplicateTitle(this.newRecipe)) {
+                        this.newRecipe.cookingTime = this.minutesToSeconds(this.newRecipe.cookingTime);
+                        axios.post('http://hnt8.ru:8222/recipe', this.newRecipe)
+                            .then(response => {
+                                console.log('Блюдо успешно добавлено:', response.data);
+                                this.fetchRecipes();
+                                this.showModal = false;
+                                this.newRecipe = {
+                                    title: '',
+                                    imageUrl: '',
+                                    cookingTime: null,
+                                    difficulty: '',
+                                    instructions: '',
+                                    ingredients: []
+                                };
+                                this.selectedIngredients = [];
+                            })
+                            .catch(error => {
+                                console.error('Ошибка при добавлении блюда:', error);
+                            });
+                    }
                 } else {
                     alert('Пожалуйста, заполните все поля');
                 }
+                // if (this.newRecipe.title && this.newRecipe.imageUrl && this.newRecipe.cookingTime && this.newRecipe.difficulty && this.newRecipe.instructions && this.newRecipe.ingredients.length > 0) {
+                //     this.newRecipe.cookingTime = this.minutesToSeconds(this.newRecipe.cookingTime);
+                //     axios.post('http://hnt8.ru:8222/recipe', this.newRecipe)
+                //         .then(response => {
+                //             console.log('Блюдо успешно добавлено:', response.data);
+                //             this.fetchRecipes();
+                //             this.showModal = false;
+                //             this.newRecipe = {
+                //                 title: '',
+                //                 imageUrl: '',
+                //                 cookingTime: null,
+                //                 difficulty: '',
+                //                 instructions: '',
+                //                 ingredients: []
+                //             };
+                //             this.selectedIngredients = [];
+                //         })
+                //         .catch(error => {
+                //             console.error('Ошибка при добавлении блюда:', error);
+                //         });
+                // } else {
+                //     alert('Пожалуйста, заполните все поля');
+                // }
             },
             deleteRecipe(recipeId) {
                 axios.delete(`http://hnt8.ru:8222/recipe?id=${recipeId}`)
