@@ -9,23 +9,29 @@
     stages {
         stage('Build') {
             steps {
-                sh 'dotnet restore'
-                sh 'dotnet build --configuration $BUILD_CONFIGURATION'
-                sh 'dotnet publish --configuration $BUILD_CONFIGURATION --output ./publish'
+                script {
+                    sh 'dotnet restore'
+                    sh 'dotnet build --configuration $BUILD_CONFIGURATION'
+                    sh 'dotnet publish --configuration $BUILD_CONFIGURATION --output ./publish'
+                }
             }
         }
 
-        stage('clean container') {
+        stage('Clean Container') {
             steps {
-                sh 'docker ps -f name=${dockerContainerName} -q | xargs --no-run-if-empty docker container stop'
-                sh 'docker container ls -a -f name=${dockerContainerName} -q | xargs -r docker container rm'
-                sh 'docker images -q --filter=reference=${dockerImageName} | xargs --no-run-if-empty docker rmi -f'
+                script {
+                    sh 'docker ps -f name=${dockerContainerName} -q | xargs --no-run-if-empty docker container stop'
+                    sh 'docker container ls -a -f name=${dockerContainerName} -q | xargs -r docker container rm'
+                    sh 'docker images -q --filter=reference=${dockerImageName} | xargs --no-run-if-empty docker rmi -f'
+                }
             }
         }
 
-        stage('docker-compose start') {
+        stage('Docker-Compose Start') {
             steps {
-                sh 'docker compose -f ./docker/docker-compose-wte-site.yml up -d'
+                script {
+                    sh 'docker compose -f ./docker/docker-compose-wte-site.yml up -d'
+                }
             }
         }
     }
