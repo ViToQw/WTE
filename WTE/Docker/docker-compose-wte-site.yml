@@ -6,6 +6,6 @@ services:
       dockerfile: Dockerfile
     image: wte-image
     ports:
-      - '17769:80'
+      - '4000:80'
     container_name: wte
     restart: always
