@@ -98,6 +98,8 @@
     overflow: hidden;
     text-align: left;
     padding-left: 21px;
+
+    margin-top:45px;
     transition: transform.2s;
 }
 

@@ -1,0 +1,11 @@
+﻿version: '1.1'
+services:
+  wte:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    image: wte-image
+    ports:
+      - '17769:8080'
+    container_name: wte
+    restart: always
