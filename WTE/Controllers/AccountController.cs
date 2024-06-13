@@ -30,7 +30,6 @@ namespace WTE.Controllers
             return View();
         }
 
-
         [HttpGet]
         [Route("account/SetUser")]
         public IActionResult SetIdUser(int user_id)
@@ -40,6 +39,14 @@ namespace WTE.Controllers
 
         }
 
+        [HttpGet]
+        [Route("account/LogOut")]
+        public IActionResult LogOut()
+        {
+            _config["IsAutorization"] = "false";
+            return Ok();
+
+        }
 
         /*код для фото пользователя*/
         [HttpPost("upload")]
@@ -66,6 +73,8 @@ namespace WTE.Controllers
             var fileUrl = $"/uploads/{file.FileName}"; // URL для сохраненного файла
             return Ok(new { url = fileUrl });
         }
+
+     
 
     }
     }

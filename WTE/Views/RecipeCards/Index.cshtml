@@ -7,9 +7,9 @@
         <div class="filters-container">
             <select class="filters" v-model="difficultyFilter">
                 <option value="">Все сложности</option>
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
+                <option value="Легко">Легко</option>
+                <option value="Средне">Средне</option>
+                <option value="Сложно">Сложно</option>
             </select>
             <select class="filters" v-model="timeFilter">
                 <option value="">Все время</option>
@@ -36,10 +36,9 @@
         </div>
         @* Избранное для пользователя *@
         <div class="filters-container">
-            <button class="button_orange" v-if="userRole !== 'admin'" v-on:click="showFavorites">Избранные</button>
-            <button class="button_orange" v-if="userRole !== 'admin'" v-on:click="showAllRecipes">Показать все блюда</button>
+            <button class="button_orange" v-on:click="showFavorites">Избранные</button>
+            <button class="button_orange"  v-on:click="showAllRecipes">Показать все блюда</button>
         </div>
-
     </div>
     <div class="recipe-cards">
         <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card" >
@@ -49,7 +48,6 @@
                     <img v-if="isFavorite(recipe.id)" src="~/Content/Images/icons8-heart-red.png" alt="Favorite Icon" class="favorite-icon">
                     <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
                 </button>
-
 
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
@@ -95,9 +93,9 @@
                     <div class="input_modal_form">
                         <p class="text_white_modal">Выбор уровня сложности:</p>
                         <select v-model="newRecipe.difficulty" class="filters_modal">
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
+                            <option value="Легко">Легко</option>
+                            <option value="Средне">Средне</option>
+                            <option value="Сложно">Сложно</option>
                         </select>
                         <p class="text_white_modal">Поле для ввода рецепта:</p>
                         <textarea v-model="newRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
@@ -127,28 +125,28 @@
 
     <!-- Модальное окно для отображения деталей блюда -->
     <div class="modal" v-if="showRecipeDetailsModal">
-        <div class="modal-content">
-            <span class="close" v-on:click="closeRecipeDetailsModal">&times;</span>
-            <h1 class="text_black_modal">{{ selectedRecipe.title }}</h1>
-
             <div class="modal-form">
                 <div class="modal_card_white">
+                
+                <h1 class="text_black_modal">{{ selectedRecipe.title }}</h1>
                     <img :src="selectedRecipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
                 </div>
+            <div class="div_close_card">
+                <span class="close" v-on:click="closeRecipeDetailsModal">&times;</span>
                 <div class="modal_card_gray">
-                    <p><strong>Ингредиенты:</strong></p>
+                    <p class="text_white_modal"><strong>Ингредиенты:</strong></p>
                     <ul>
-                        <li v-for="ingredient in selectedRecipe.ingredients" :key="ingredient.id">
+                        <li v-for="ingredient in selectedRecipe.ingredients" :key="ingredient.id" class="text_white_modal">
                             {{ ingredient.name }} - {{ ingredient.quantity }}
                         </li>
                     </ul>
-                    <p><strong>Время приготовления:</strong> {{ Math.round(selectedRecipe.cookingTime / 60) }} минут</p>
-                    <p><strong>Сложность:</strong> {{ selectedRecipe.difficulty }}</p>
-                    <p><strong>Рецепт:</strong></p>
-                    <p>{{ selectedRecipe.instructions }}</p>
+                    <p class="text_white_modal"><strong>Время приготовления:</strong> {{ Math.round(selectedRecipe.cookingTime / 60) }} минут</p>
+                    <p class="text_white_modal"><strong>Сложность:</strong> {{ selectedRecipe.difficulty }}</p>
+                    <p class="text_white_modal"><strong>Рецепт:</strong></p>
+                    <p class="text_white_modal">{{ selectedRecipe.instructions }}</p>
+                </div>
                 </div>
             </div>
-        </div>
     </div>
 
     <!-- Модальное окно изменения -->
@@ -169,9 +167,9 @@
                     <div class="input_modal_form">
                         <p class="text_white_modal">Выбор уровня сложности:</p>
                         <select v-model="editedRecipe.difficulty" class="filters_modal">
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
+                            <option value="Легко">Легко</option>
+                            <option value="Средне">Средне</option>
+                            <option value="Сложно">Сложно</option>
                         </select>
                         <p class="text_white_modal">Поле для ввода рецепта:</p>
                         <textarea v-model="editedRecipe.instructions" class="recipe-instructions" placeholder="Введите рецепт здесь"></textarea>
@@ -276,7 +274,6 @@
             },
 
             fetchUserData() {
-       
                 return axios.get('http://hnt8.ru:8222/account')
                     .then(response => {
                         console.log('User data from API:', response.data);
@@ -290,6 +287,7 @@
                                 //Вызвала здесь метод для избранного
                                 this.fetchFavorites();
                             } else {
+                                location.reload();
                                 console.error('Пользователь с указанным id не найден');
                             }
                         } else {
@@ -306,6 +304,7 @@
                 this.fetchUserData()
                     .then(() => {
                         console.log('Данные о пользователе успешно загружены');
+                 
                         this.resetApp(); // Перезапускаем приложение после загрузки данных о пользователе
                     })
                     .catch(error => {
@@ -702,6 +701,7 @@
             }
         },
         mounted() {
+           
             this.fetchRecipes();
             this.fetchUserData();
             //добавила для ассинхронный запрос
@@ -809,6 +809,8 @@
         text-align: center;
     }
 
+   
+
     .modal_card_white {
         width: 300px;
         height: 500px;
@@ -829,6 +831,12 @@
         flex-wrap: wrap;
         display: flex;
         color: #FFFFFF;
+    }
+
+    .div_close_card{
+        background: #262626;
+        opacity: 85%;
+        padding: 24px;
     }
 
         .close:hover,
@@ -1020,10 +1028,11 @@
     }
 
     .text_white_modal{
+        margin-right: 60px;
         text-decoration: none;
         color: #FFFFFF;
         font-family: Raleway;
-        font-size: 16px;
+        font-size: 18px;
         margin-bottom:10px;
     }
 

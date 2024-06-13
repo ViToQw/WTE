@@ -196,7 +196,7 @@
                         .then(response => {
                             const existingUser = response.data.find(user => user.phone === this.phone_number);
                             if (existingUser) {
-                                console.log('Пользователь с указанным телефоном уже существует', response.data);
+                                alert('Пользователь с указанным телефоном уже существует', response.data);
                                 this.registrationError = true;
                                 return;
                             }
@@ -208,7 +208,7 @@
                                 admin: false
                             })
                                 .then(response => {
-                                    console.log('Пользователь успешно зарегистрирован');
+                                    alert('Пользователь успешно зарегистрирован');
                                     this.registrationSuccess = true;
                                     setTimeout(() => {
                                         window.location.href = '/Account/Index';
