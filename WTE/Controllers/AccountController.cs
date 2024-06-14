@@ -63,7 +63,14 @@ namespace WTE.Controllers
                 Directory.CreateDirectory(uploads);
             }
 
-            var filePath = Path.Combine(uploads, file.FileName);
+            var timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            // Получаем расширение файла
+            var extension = Path.GetExtension(file.FileName);
+            // Создаем новое имя файла с временной меткой
+            var newFileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{timestamp}{extension}";
+
+
+            var filePath = Path.Combine(uploads, newFileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {

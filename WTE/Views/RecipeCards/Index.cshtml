@@ -157,8 +157,11 @@
             <div class="modal-form">
                 <div class="modal_card_white">
                     <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
-                    <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
-                    <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" />
+                   @*  <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" /> *@
+                    <input type="file" v-on:change="handleFileUpload" />
+                    <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
+                    <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button>
+
                     <p class="text_black">Добавление нового ингредиента</p>
                     <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
                     <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
@@ -246,8 +249,9 @@
                 favorites: [],
                 showAll: true,
                 showRecipeDetailsModal: false,
-                selectedRecipe: null
+                selectedRecipe: null,
 
+                selectedFile: null
 
             };
         },
@@ -529,6 +533,7 @@
             closeEditModal() {
                 this.editedRecipe = null;
                 this.showEditModal = false;
+                this.selectedIngredients = [];
             },
             updateEditedIngredients() {
                 this.editedRecipe.ingredients = [];
@@ -563,7 +568,9 @@
                         .then(response => {
                             console.log('Блюдо успешно изменено:', response.data);
                             this.showEditModal = false;
+                            this.selectedIngredients = [];
                             this.fetchRecipes();
+
                         })
                         .catch(error => {
                             console.error('Ошибка при изменении блюда:', error);
@@ -574,6 +581,24 @@
                 } else {
                     alert('Пожалуйста, заполните все поля');
                 }
+            },
+
+            //Просмотреть и сделать добавление через проводник 
+            handleFileUpload(event) {
+                this.selectedFile = event.target.files[0];
+            },
+            uploadFile() {
+                const formData = new FormData();
+                formData.append('file', this.selectedFile);
+
+                axios.post('/uploadRecipe', formData)
+                    .then(response => {
+                        console.log('Файл успешно загружен:', response.data.url);
+                        this.user.imageUrl = response.data.url; // Сохранить URL изображения в профиле пользователя
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке файла:', error);
+                    });
             },
 
             // Избранное
@@ -619,6 +644,8 @@
                             console.log('Рецепт удален из избранного:', response.data);
                             this.removeFavoriteLocally(recipeId);
                             this.loadFavorites();
+                            //пока так оставим обновление страницы после удаления в избранном
+                            location.reload();
                         })
                         .catch(error => {
                             console.error('Ошибка при удалении рецепта из избранного:', error);
@@ -632,6 +659,8 @@
                             console.log('Рецепт добавлен в избранное:', response.data);
                             this.addFavoriteLocally(recipeId);
                             this.loadFavorites();
+                            //пока так оставим обновление страницы после добавления в избранное 
+                            location.reload();
                         })
                         .catch(error => {
                             console.error('Ошибка при добавлении рецепта в избранное:', error);
@@ -666,6 +695,8 @@
             addFavoriteLocally(recipeId) {
                 this.favorites.push(recipeId);
                 this.filterRecipes(); 
+
+                this.updateRecipeFavorites();
             },
             removeFavoriteLocally(recipeId) {
                 const index = this.favorites.indexOf(recipeId);
