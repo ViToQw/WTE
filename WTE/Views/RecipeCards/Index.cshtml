@@ -117,7 +117,7 @@
                             </li>
                         </ul>
                     </div>
-                    <button class="button_transparent" v-on:click="addNewRecipe">Добавить блюдо</button>
+                    <button class="button_transponent" v-on:click="addNewRecipe">Добавить блюдо</button>
                 </div>
             </div>
         </div>
@@ -191,7 +191,7 @@
                             </li>
                         </ul>
                     </div>
-                    <button class="button_transparent" v-on:click="updateRecipe">Изменить блюдо</button>
+                    <button class="button_transponent" v-on:click="updateRecipe">Изменить блюдо</button>
                 </div>
             </div>
         </div>
@@ -828,7 +828,8 @@
         background: #262626;
         opacity: 85%;
         padding: 24px;
-        flex-wrap: wrap;
+        /* flex-wrap: wrap; */
+        flex-direction: column;
         display: flex;
         color: #FFFFFF;
     }
@@ -1037,8 +1038,10 @@
     }
 
     .selected-ingredients{
-        height:auto;
+        height: auto;
         overflow-y: scroll;
+        display: flex;
+        flex-direction: column;
     }
 
     .favorite-button {
@@ -1048,6 +1051,24 @@
     font-size: 24px;
     right: 10px;
     top: 10px;
+    }
+
+    .button_transponent {
+        font-family: Raleway;
+        font-size: 18px;
+        background-color: transparent;
+        border: 2px solid #FFFFFF;
+        color: #FFFFFF;
+        background: #262626;
+        opacity: 85%;
+        height: 56px;
+        display: inline;
+        width: 190px;
+        text-align: center;
+        transition: transform .2s;
+        margin-top: 40px;
+        margin-left: 112px;
+        position: relative;
     }
 
 </style>

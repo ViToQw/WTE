@@ -12,6 +12,7 @@
             <div class="autorization_div">
                 <input class="autorization_input_text" placeholder="Введите телефон" maxlength="20" v-model="phone_number" />
                 <span v-if="showErrors && !phone_number" class="error">Введите телефон</span>
+                <span v-if="showErrors && userNotFoundError" class="error">Пользователь с указанным телефоном не найден</span>
             </div>
 
             <div class="autorization_div">
@@ -99,6 +100,8 @@
                     password: '',
                     loginError: false,
                     showErrors: false,
+                    userNotFoundError: false,
+                    passwordError: false,
                     id: ''
                 }
             },
@@ -118,26 +121,59 @@
                 },
                 
                 login() {
+                    // this.showErrors = true;
+                    // if (!this.phone_number || !this.password) {
+                    //     return;
+                    // }
+                    // axios.get('http://hnt8.ru:8222/account')
+                    //     .then(response => {
+                    //         const user = response.data.find(user => user.phone === this.phone_number);
+                    //         if (!user) {
+                    //             console.error('Пользователь с указанным телефоном не найден');
+                    //             this.loginError = true;
+                    //             return;
+                    //         }
+                    //         if (user.password !== this.password) {
+                    //             console.error('Неверный пароль');
+                    //             this.loginError = true;
+                    //             return;
+                    //         }
+                    //         this.AddIdUser(user.id);
+                    //         window.location.href = '/RecipeCards/Index';
+                            
+                    //     })
+                    //     .catch(error => {
+                    //         console.error('Ошибка при проверке данных пользователя:', error);
+                    //         this.loginError = true;
+                    //     });
                     this.showErrors = true;
+
                     if (!this.phone_number || !this.password) {
                         return;
                     }
+
                     axios.get('http://hnt8.ru:8222/account')
                         .then(response => {
                             const user = response.data.find(user => user.phone === this.phone_number);
+
                             if (!user) {
-                                console.error('Пользователь с указанным телефоном не найден');
-                                this.loginError = true;
+                                this.userNotFoundError = true;
+                                this.passwordError = false;
+                                this.loginError = false;
                                 return;
                             }
+
                             if (user.password !== this.password) {
-                                console.error('Неверный пароль');
+                                this.passwordError = true;
                                 this.loginError = true;
+                                this.userNotFoundError = false;
                                 return;
                             }
+
+                            this.userNotFoundError = false;
+                            this.passwordError = false;
                             this.AddIdUser(user.id);
                             window.location.href = '/RecipeCards/Index';
-                            
                         })
                         .catch(error => {
                             console.error('Ошибка при проверке данных пользователя:', error);

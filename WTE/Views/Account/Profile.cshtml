@@ -106,17 +106,32 @@
             },
             deleteAccount() {
                 if (confirm('Вы уверены, что хотите удалить аккаунт?')) {
-                    axios.delete(`http://hnt8.ru:8222/account?id=${this.userId}`)
+                    // Получаем список всех пользователей
+                    axios.get('http://hnt8.ru:8222/account')
                         .then(response => {
-                            console.log('Аккаунт успешно удален:', response.data);
-                            alert('Аккаунт успешно удален');
-                            this.logout(); // Вызываем метод logout после удаления аккаунта
+                            const adminUsers = response.data.filter(user => user.admin);
+
+                            // Проверяем, есть ли больше одного администратора
+                            if (adminUsers.length > 1 || !this.user.admin) {
+                                // Если администраторов больше одного, или текущий пользователь не администратор, то разрешаем удаление
+                                axios.delete(`http://hnt8.ru:8222/account?id=${this.userId}`)
+                                    .then(response => {
+                                        console.log('Аккаунт успешно удален:', response.data);
+                                        alert('Аккаунт успешно удален');
+                                        this.logout(); // Вызываем метод logout после удаления аккаунта
+                                    })
+                                    .catch(error => {
+                                        console.error('Ошибка при удалении аккаунта:', error);
+                                    });
+                            } else {
+                                // Если администратор остался один, то выводим предупреждение
+                                alert('Невозможно удалить последний аккаунт администратора');
+                            }
                         })
                         .catch(error => {
-                            console.error('Ошибка при удалении аккаунта:', error);
+                            console.error('Ошибка при получении списка пользователей:', error);
                         });
                 } else {
-                    // Если пользователь отказался от удаления, можно добавить какое-то дополнительное действие или просто закрыть всплывающее окно
                     console.log('Удаление аккаунта отменено');
                 }
             },
