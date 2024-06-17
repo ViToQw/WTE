@@ -22,6 +22,7 @@ namespace WTE.Controllers
             return RedirectToAction("Profile", "Account");
         }
 
+
         /*код для фото пользователя*/
         [HttpPost("uploadRecipe")]
         public async Task<IActionResult> UploadFile(IFormFile file)
@@ -36,11 +37,8 @@ namespace WTE.Controllers
             {
                 Directory.CreateDirectory(uploads);
             }
-
             var timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-            // Получаем расширение файла
             var extension = Path.GetExtension(file.FileName);
-            // Создаем новое имя файла с временной меткой
             var newFileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{timestamp}{extension}";
 
 

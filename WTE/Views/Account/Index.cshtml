@@ -10,7 +10,7 @@
             </div>
 
             <div class="autorization_div">
-                <input class="autorization_input_text" placeholder="Введите телефон" maxlength="20" v-model="phone_number" />
+                <input class="autorization_input_text" placeholder="Введите телефон" maxlength="20" v-model="phone_number" type="tel" v-on:keydown="preventNonNumeric"  />
                 <span v-if="showErrors && !phone_number" class="error">Введите телефон</span>
                 <span v-if="showErrors && userNotFoundError" class="error">Пользователь с указанным телефоном не найден</span>
             </div>
@@ -106,6 +106,21 @@
                 }
             },
             methods: {
+
+              
+                preventNonNumeric(event) {
+                    const key = event.key;
+                    // Разрешить клавиши управления
+                    if (key === "Backspace" || key === "Delete" || key === "ArrowLeft" || key === "ArrowRight" || key === "Tab") {
+                        return;
+                    }
+                    // Разрешить только цифры и символы, используемые в телефонных номерах
+                    const regex = /[0-9()+\- ]/;
+                    if (!regex.test(key)) {
+                        event.preventDefault();
+                    }
+                },
+
                 AddIdUser(id) {
                     axios.get(`/account/SetUser?user_id=${id}`)
                         .then(response => {

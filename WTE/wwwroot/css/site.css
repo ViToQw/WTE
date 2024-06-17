@@ -12,12 +12,10 @@ header {
 }
 
 
-
-/*Почему то линия сверху жирнее чем сверху*/
 .site_header nav a {
     position: relative;
-    text-decoration: none; /* Убираем стандартное подчеркивание */
-    color: #FFFFFF; /* Наследуем цвет текста */
+    text-decoration: none; 
+    color: #FFFFFF; 
 }
 
     .site_header nav a.active::before,
@@ -30,11 +28,11 @@ header {
         background-color: currentColor; /* Цвет линии совпадает с цветом текста */
     }
     .site_header nav a.active::before {
-        top: -5px; /* Линия сверху с отступом */
+        top: -5px; 
     }
 
     .site_header nav a.active::after {
-        bottom: -5px; /* Линия снизу с отступом */
+        bottom: -5px;
     }
 
 

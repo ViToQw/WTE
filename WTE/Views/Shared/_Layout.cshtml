@@ -32,7 +32,7 @@
 
             @if (Configuration["IsAutorization"] != "false")
             {
-                <a class="recipes" @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "") href="/RecipeCards/Index">Рецепты</a>
+                <a class="recipes @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "")" href="/RecipeCards/Index">Рецепты</a>
                 <a class="account @(currentController == "Account" && currentAction == "Profile" ? "active" : "")" href="/Account/Profile">Аккаунт</a>
             }
             else
