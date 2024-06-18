@@ -48,7 +48,7 @@
                     <img v-if="isFavorite(recipe.id)" src="~/Content/Images/icons8-heart-red.png" alt="Favorite Icon" class="favorite-icon">
                     <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
                 </button> *@
-                <favorite-star :recipeId="recipe.id" :isFavorite="favorites.includes(recipe.id)" :userId="userId"></favorite-star>
+                <favorite-star :recipe-id="recipe.id" :user-id="userId" :v-model="isFavorite(recipe.id)" :is-favorite="isFavorite(recipe.id)"></favorite-star>
 
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
@@ -213,7 +213,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
-<script src="FavoriteStar.js" defer></script>
+<script src="~/js/FavoriteStar.js" defer></script>
 <script type="module">
    //добавила
     const userId = @ViewBag.id;
@@ -222,7 +222,7 @@
 
     const recipeCardsApp = Vue.createApp({
         components: {
-            FavoriteStar, 
+            FavoriteStar 
         },
         data() {
             return {
