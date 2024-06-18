@@ -12,14 +12,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.4.15/dist/vue.global.js"></script>
+    <style>
+        .HowIsWork{
+            text-align:center;
+            font-family:Raleway;
+            font-size:24px;
+            margin-top: 25px;
+        }
 
+        .Discription{
+            color: black;
+            font-size: 18px;
+            font-family: Raleway;
+            justify-content: space-between;
+            text-decoration: none;
+            text-align: left;
+            margin-left: 100px;
+            margin-right: 100px;
+            margin-top: 40px;
+            text-indent: 40px;
+
+        }
+
+    </style>
     <script>
         // JavaScript для изменения содержимого основной части страницы
         function showUserAgreement() {
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                                <h2 class="logo>Пользовательское соглашение</h2>
-                        <p class="logo">Здесь должен быть ваш текст пользовательского соглашения.</p>
+                        <h2 class="HowIsWork">Как это работает?</h2>
+                                
+                        <div class="Discription">
+                                <p>Для авторизации необходимо нажать на кнопку «Аккаунт». В открывшейся странице вы сможет либо авторизироваться в системе, либо зарегистрироваться. Для того, чтобы пройти авторизацию вам нужно ввести свой номер телефона и пароль.
+                Для прохождения регистрации, вам необходимо заполнить поля: имя, номер телефона и пароль. После успешной регистрации вы сможете увидеть сообщение об успешной регистрации и авторизироваться.</p>
+
+                        </div>
                     `;
 
             // Убираем класс 'active' у всех ссылок в навигации
@@ -33,7 +60,6 @@
             }
         }
     </script>
-
 </head>
 <body>
     @inject Microsoft.Extensions.Configuration.IConfiguration Configuration

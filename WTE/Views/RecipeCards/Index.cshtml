@@ -85,12 +85,10 @@
                 <div class="modal_card_white">
                     <input v-model="newRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" maxlength="50" />
 
-                   @*  <input v-model="newRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
-                    <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" /> *@
-
                     <input type="file" v-on:change="handleFileUpload" />
                     <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
-                    <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button>
+                    <button class="save_change_recipe" v-on:click="uploadFileNewRecipe">Загрузить фото</button>
+
 
                     <p class="text_black">Добавление нового ингредиента</p>
                     <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" maxlength="50"/>
@@ -106,7 +104,7 @@
                                 <option value="Сложно">Сложно</option>
                             </select>
                             <p class="text_white_modal">Поле для ввода рецепта:</p>
-                            <textarea v-model="newRecipe.instructions" class="recipe-instructions_recipe" placeholder="Введите рецепт здесь"></textarea>
+                            <textarea v-model="newRecipe.instructions" class="recipe-instructions_recipe"  placeholder="Введите рецепт здесь"></textarea>
                             <p class="text_white_modal">Время приготовления (в минутах):</p>
                             <input v-model.number="newRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
                             <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
@@ -170,9 +168,13 @@
                 <div class="modal_card_white">
                     <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" maxlength="50" />
                    @*  <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" /> *@
-                    <input type="file" v-on:change="handleFileUpload" />
+                   @*  <input type="file" v-on:change="handleFileUpload" />
                     <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
+                    <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button> *@
+                    <input type="file" v-on:change="handleFileUpload" />
+                    <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
                     <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button>
+
 
                     <p class="text_black">Добавление нового ингредиента</p>
                     <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" maxlength="50" />
@@ -465,14 +467,16 @@
                 // }
             },
             deleteRecipe(recipeId) {
-                axios.delete(`http://hnt8.ru:8222/recipe?id=${recipeId}`)
-                    .then(response => {
-                        console.log('Рецепт успешно удален:', response.data);
-                        this.fetchRecipes();
-                    })
-                    .catch(error => {
-                        console.error('Ошибка при удалении рецепта:', error);
-                    });
+                if (confirm('Вы уверены, что хотите удалить это блюдо?')) {
+                    axios.delete(`http://hnt8.ru:8222/recipe?id=${recipeId}`)
+                        .then(response => {
+                            console.log('Рецепт успешно удален:', response.data);
+                            this.fetchRecipes();
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при удалении рецепта:', error);
+                        });
+                }
             },
             addNewIngredient() {
                 if (this.newIngredientName) {
@@ -567,8 +571,6 @@
                 this.showEditModal = true;
                 this.selectedIngredients = this.editedRecipe.ingredients.map(ingredient => ({ ...ingredient }));
                 this.fetchIngredients();
-
-               
             },
             closeEditModal() {
                 this.editedRecipe = null;
@@ -626,10 +628,24 @@
                 }
             },
 
-            //Просмотреть и сделать добавление через проводник 
+            //Просмотреть и сделать добавление через проводник
             handleFileUpload(event) {
                 this.selectedFile = event.target.files[0];
             },
+            uploadFileNewRecipe() {
+                const formData = new FormData();
+                formData.append('file', this.selectedFile);
+
+                axios.post('/uploadRecipe', formData)
+                    .then(response => {
+                        console.log('Файл успешно загружен:', response.data.url);
+                        this.newRecipe.imageUrl = response.data.url;
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке файла:', error);
+                    });
+            },
+
             uploadFile() {
                 const formData = new FormData();
                 formData.append('file', this.selectedFile);
@@ -643,6 +659,7 @@
                         console.error('Ошибка при загрузке файла:', error);
                     });
             },
+
 
             // Избранное
             showFavorites() {
@@ -819,6 +836,7 @@
             //     .catch(error => {
             //         console.error('Ошибка при загрузке данных:', error);
             //     });
+            this.loadData();
 
 
         }
@@ -1198,6 +1216,10 @@
         font-family: Raleway;
         text-align: center;
         text-align: left;
+        max-height:80px;
+        max-width:300px;
+        min-width: 200px;
+        min-height: 80px;
         width: 300px;
         height: 80px;
     }
