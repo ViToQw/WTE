@@ -15,7 +15,7 @@
     },
     template: `
     <div @click="toggleFavorite" class="favorite-star">
-      <img v-bind:src="heartIconSrc" class="heart-icon" />
+       <img v-bind:src="heartIconSrc" class="heart-icon" :class="{ 'is-favorite': isFavorite }" />
     </div>
   `,
     computed: {
@@ -30,12 +30,13 @@
                 axios.delete(url).then(response => {
                     console.log('Рецепт удален из избранного:', response.data);
                 });
+                this.$emit('update:is-favorite', false);
             } else {
                 axios.post(url).then(response => {
                     console.log('Рецепт добавлен в избранное:', response.data);
+                    this.$emit('update:is-favorite', true);
                 });
             }
-            this.$emit('update:is-favorite', !this.isFavorite); // Эмитируем событие обновления пропса
         },
     },
     style: `
@@ -43,12 +44,20 @@
       cursor: pointer;
       display: inline-block; /* Чтобы размер блока подстраивался под изображение */
     }
-
     .heart-icon {
-      width: 24px;
-      height: 24px;
-      transition: opacity 0.3s ease; /* Анимация изменения прозрачности */
-    }
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease; /* Анимация изменения прозрачности, фильтра и трансформации */
+}
+
+.heart-icon:hover {
+  transform: scale(1.2) rotate(20deg); /* Увеличение размера и поворот при наведении */
+  opacity: 0.8; /* Изменение прозрачности при наведении */
+}
+
+.is-favorite {
+  filter: hue-rotate(330deg) brightness(1.2); /* Изменение цвета на красный и увеличение яркости для избранного */
+}
   `
 };
 

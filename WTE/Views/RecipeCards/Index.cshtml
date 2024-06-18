@@ -40,7 +40,7 @@
             <button class="button_orange"  v-on:click="showAllRecipes">Показать все блюда</button>
         </div>
     </div>
-    <div class="recipe-cards">
+    <div class="recipe-cards" v-if="recipes.length > 0 && favorites !== null">
         <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card" >
             <div class="recipe_card_white">
 
@@ -266,7 +266,7 @@
                 showAll: true,
                 showRecipeDetailsModal: false,
                 selectedRecipe: null,
-
+                showOnlyFavorites: false,
                 selectedFile: null
 
             };
@@ -339,6 +339,10 @@
 
             filterRecipes() {
                 let filtered = this.recipes;
+
+                if (this.showOnlyFavorites) {
+                    filtered = filtered.filter(recipe => this.favorites.includes(recipe.id));
+                }
                 if (this.difficultyFilter) {
                     filtered = filtered.filter(recipe => recipe.difficulty === this.difficultyFilter);
                 }
@@ -707,9 +711,15 @@
             updateRecipeData(recipeId, isFavorite) {
                 // Здесь вы можете выполнить обновление данных рецепта на сервере или локально
                 // Например, можно отправить запрос на сервер для обновления isFavorite для конкретного recipeId
-                const recipeToUpdate = this.filteredRecipes.find(recipe => recipe.id === recipeId);
-                if (recipeToUpdate) {
-                    recipeToUpdate.isFavorite = isFavorite;
+                if (isFavorite) {
+                    if (!this.favorites.includes(recipeId)) {
+                        this.favorites.push(recipeId);
+                    }
+                } else {
+                    const index = this.favorites.indexOf(recipeId);
+                    if (index !== -1) {
+                        this.favorites.splice(index, 1);
+                    }
                 }
             },
 
@@ -728,17 +738,36 @@
                     this.favorites.splice(index, 1);
                     this.filterRecipes(); 
                 }
-            }
+            },
+            toggleShowOnlyFavorites() {
+                this.showOnlyFavorites = !this.showOnlyFavorites;
+                this.filterRecipes();
+            },
+            toggleShowAll() {
+                this.showAll = !this.showAll;
+            },
+            loadData() {
+                // Используем Promise.all для параллельной загрузки данных
+                Promise.all([this.fetchUserData(), this.fetchRecipes(), this.loadFavorites()])
+                    .then(() => {
+                        console.log('Все данные успешно загружены');
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке данных:', error);
+                    });
+            },
             
         },
         created() {
-            this.fetchUserData().then(() => {
-                this.fetchRecipes();
-                this.loadFavorites();
+            // this.fetchUserData().then(() => {
+            //     this.fetchRecipes();
+            //     this.loadFavorites();
 
-                //Добавила для вывода избранных блюд
-                return Promise.all([this.fetchRecipes(), this.loadFavorites()]);
-            });
+            //     //Добавила для вывода избранных блюд
+            //     return Promise.all([this.fetchRecipes(), this.loadFavorites()]);
+            // });
+
+            this.loadData();
         },
 
         watch: {
@@ -757,17 +786,17 @@
         },
         mounted() {
            
-            this.fetchRecipes();
-            this.fetchUserData();
-            //добавила для ассинхронный запрос
-            Promise.all([this.fetchRecipes(), this.fetchUserData()])
-                .then(() => {
-                    console.log('Все данные успешно загружены');
+            //this.fetchRecipes();
+            // this.fetchUserData();
+            // //добавила для ассинхронный запрос
+            // Promise.all([this.fetchRecipes(), this.fetchUserData()])
+            //     .then(() => {
+            //         console.log('Все данные успешно загружены');
 
-                })
-                .catch(error => {
-                    console.error('Ошибка при загрузке данных:', error);
-                });
+            //     })
+            //     .catch(error => {
+            //         console.error('Ошибка при загрузке данных:', error);
+            //     });
 
 
         }
