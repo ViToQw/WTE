@@ -44,11 +44,11 @@
         <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card" >
             <div class="recipe_card_white">
 
-                <button class="favorite-button" v-on:click="toggleFavorite(recipe.id)">
+               @*  <button class="favorite-button" v-on:click="toggleFavorite(recipe.id)">
                     <img v-if="isFavorite(recipe.id)" src="~/Content/Images/icons8-heart-red.png" alt="Favorite Icon" class="favorite-icon">
                     <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
-                </button>
-               @*  <favorite-star :recipeId="recipe.id" :isFavorite="favorites.includes(recipe.id)" :userId="userId" v-on:toggle="toggleFavorite()"></favorite-star> *@
+                </button> *@
+                <favorite-star :recipeId="recipe.id" :isFavorite="favorites.includes(recipe.id)" :userId="userId"></favorite-star>
 
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
@@ -213,17 +213,17 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
+<script src="FavoriteStar.js" defer></script>
 <script type="module">
    //добавила
     const userId = @ViewBag.id;
     // const userId = @Html.Raw(Json.Serialize(ViewBag.id));
 
-    // import FavoriteStar from './FavoriteStar.vue';
 
     const recipeCardsApp = Vue.createApp({
-        // components: {
-        //     FavoriteStar, 
-        // },
+        components: {
+            FavoriteStar, 
+        },
         data() {
             return {
                 recipes: [],
