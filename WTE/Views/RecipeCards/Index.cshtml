@@ -40,15 +40,15 @@
             <button class="button_orange"  v-on:click="showAllRecipes">Показать все блюда</button>
         </div>
     </div>
-    <div class="recipe-cards">
+    <div class="recipe-cards" v-if="recipes.length > 0 && favorites !== null">
         <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card" >
             <div class="recipe_card_white">
 
-                <button class="favorite-button" v-on:click="toggleFavorite(recipe.id)">
+               @*  <button class="favorite-button" v-on:click="toggleFavorite(recipe.id)">
                     <img v-if="isFavorite(recipe.id)" src="~/Content/Images/icons8-heart-red.png" alt="Favorite Icon" class="favorite-icon">
                     <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
-                </button>
-               @*  <favorite-star :recipeId="recipe.id" :isFavorite="favorites.includes(recipe.id)" :userId="userId" v-on:toggle="toggleFavorite()"></favorite-star> *@
+                </button> *@
+                <favorite-star :recipe-id="recipe.id" :user-id="userId" :v-model="isFavorite(recipe.id)" :is-favorite="isFavorite(recipe.id)" v-on:update:is-favorite="updateRecipeData(recipe.id, $event)"></favorite-star>
 
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
@@ -219,17 +219,17 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
+<script src="~/js/FavoriteStar.js" defer></script>
 <script type="module">
    //добавила
     const userId = @ViewBag.id;
     // const userId = @Html.Raw(Json.Serialize(ViewBag.id));
 
-    // import FavoriteStar from './FavoriteStar.vue';
 
     const recipeCardsApp = Vue.createApp({
-        // components: {
-        //     FavoriteStar, 
-        // },
+        components: {
+            FavoriteStar 
+        },
         data() {
             return {
                 recipes: [],
@@ -272,7 +272,7 @@
                 showAll: true,
                 showRecipeDetailsModal: false,
                 selectedRecipe: null,
-
+                showOnlyFavorites: false,
                 selectedFile: null
 
             };
@@ -345,6 +345,10 @@
 
             filterRecipes() {
                 let filtered = this.recipes;
+
+                if (this.showOnlyFavorites) {
+                    filtered = filtered.filter(recipe => this.favorites.includes(recipe.id));
+                }
                 if (this.difficultyFilter) {
                     filtered = filtered.filter(recipe => recipe.difficulty === this.difficultyFilter);
                 }
@@ -726,7 +730,20 @@
                         console.error('Ошибка при получении избранных рецептов:', error);
                     });
             },
-
+            updateRecipeData(recipeId, isFavorite) {
+                // Здесь вы можете выполнить обновление данных рецепта на сервере или локально
+                // Например, можно отправить запрос на сервер для обновления isFavorite для конкретного recipeId
+                if (isFavorite) {
+                    if (!this.favorites.includes(recipeId)) {
+                        this.favorites.push(recipeId);
+                    }
+                } else {
+                    const index = this.favorites.indexOf(recipeId);
+                    if (index !== -1) {
+                        this.favorites.splice(index, 1);
+                    }
+                }
+            },
 
             isFavorite(recipeId) {
                 return this.favorites.includes(recipeId);
@@ -743,17 +760,36 @@
                     this.favorites.splice(index, 1);
                     this.filterRecipes(); 
                 }
-            }
+            },
+            toggleShowOnlyFavorites() {
+                this.showOnlyFavorites = !this.showOnlyFavorites;
+                this.filterRecipes();
+            },
+            toggleShowAll() {
+                this.showAll = !this.showAll;
+            },
+            loadData() {
+                // Используем Promise.all для параллельной загрузки данных
+                Promise.all([this.fetchUserData(), this.fetchRecipes(), this.loadFavorites()])
+                    .then(() => {
+                        console.log('Все данные успешно загружены');
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке данных:', error);
+                    });
+            },
             
         },
         created() {
-            this.fetchUserData().then(() => {
-                this.fetchRecipes();
-                this.loadFavorites();
+            // this.fetchUserData().then(() => {
+            //     this.fetchRecipes();
+            //     this.loadFavorites();
 
-                //Добавила для вывода избранных блюд
-                return Promise.all([this.fetchRecipes(), this.loadFavorites()]);
-            });
+            //     //Добавила для вывода избранных блюд
+            //     return Promise.all([this.fetchRecipes(), this.loadFavorites()]);
+            // });
+
+            this.loadData();
         },
 
         watch: {
@@ -772,17 +808,17 @@
         },
         mounted() {
            
-            this.fetchRecipes();
-            this.fetchUserData();
-            //добавила для ассинхронный запрос
-            Promise.all([this.fetchRecipes(), this.fetchUserData()])
-                .then(() => {
-                    console.log('Все данные успешно загружены');
+            //this.fetchRecipes();
+            // this.fetchUserData();
+            // //добавила для ассинхронный запрос
+            // Promise.all([this.fetchRecipes(), this.fetchUserData()])
+            //     .then(() => {
+            //         console.log('Все данные успешно загружены');
 
-                })
-                .catch(error => {
-                    console.error('Ошибка при загрузке данных:', error);
-                });
+            //     })
+            //     .catch(error => {
+            //         console.error('Ошибка при загрузке данных:', error);
+            //     });
 
 
         }
