@@ -12,7 +12,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.4.15/dist/vue.global.js"></script>
-   
+
+    <script>
+        // JavaScript для изменения содержимого основной части страницы
+        function showUserAgreement() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                                <h2 class="logo>Пользовательское соглашение</h2>
+                        <p class="logo">Здесь должен быть ваш текст пользовательского соглашения.</p>
+                    `;
+
+            // Убираем класс 'active' у всех ссылок в навигации
+            const navLinks = document.querySelectorAll('.site_header nav a');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            // Добавляем класс 'active' только для текущей ссылки
+            const userAgreementLink = document.querySelector('.user_agreement');
+            if (userAgreementLink) {
+                userAgreementLink.classList.add('active');
+            }
+        }
+    </script>
+
 </head>
 <body>
     @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
@@ -25,8 +46,9 @@
     <header class="site_header">
         <p class="logo">What To Eat?</p>
         <nav>
-            <a class="user_agreement @(currentAction == "UserAgreement" ? "active" : "")" href="/userAgreement">Пользовательское соглашение</a>
-            <a class="how_works @(currentController == "Home" && currentAction == "Index" ? "active" : "")" href="/Home/Index">Как это работает</a>
+          @*   <a class="user_agreement @(currentAction == "UserAgreement" ? "active" : "")" href="/userAgreement">Пользовательское соглашение</a> *@
+            <a class="user_agreement" href="#" onclick="showUserAgreement()">Как это работает</a>
+            <a class="how_works @(currentController == "Home" && currentAction == "Index" ? "active" : "")" href="/Home/Index">Возможности</a>
 
            @*  <a class="recipes @(currentController == "RecipeCards" && currentAction == "Index" ? "active" : "")" href="/recipes">Рецепты</a> *@
 
@@ -43,11 +65,11 @@
             }
         </nav>
     </header>
-    <main>
-
+    <main id="mainContent">
         @RenderBody()
         @RenderSection("Scripts", required: false)
     </main>
+
 </body>
 </html>
 

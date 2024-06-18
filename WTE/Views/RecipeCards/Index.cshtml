@@ -83,11 +83,17 @@
             <h1 class="text_black_modal">Добавление нового блюда</h1>
             <div class="modal-form">
                 <div class="modal_card_white">
-                    <input v-model="newRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
-                    <input v-model="newRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
-                    <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" />
+                    <input v-model="newRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" maxlength="50" />
+
+                   @*  <input v-model="newRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" />
+                    <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после ввода URL" class="recipe-photo" /> *@
+
+                    <input type="file" v-on:change="handleFileUpload" />
+                    <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
+                    <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button>
+
                     <p class="text_black">Добавление нового ингредиента</p>
-                    <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
+                    <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" maxlength="50"/>
                     <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
                 </div>
                 <div class="modal_card_gray">
@@ -162,14 +168,14 @@
             <h1 class="text_black_modal">Изменение блюда</h1>
             <div class="modal-form">
                 <div class="modal_card_white">
-                    <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" />
+                    <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" maxlength="50" />
                    @*  <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" /> *@
                     <input type="file" v-on:change="handleFileUpload" />
                     <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
                     <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button>
 
                     <p class="text_black">Добавление нового ингредиента</p>
-                    <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" />
+                    <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" maxlength="50" />
                     <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
                 </div>
                 <div class="modal_card_gray">
@@ -184,10 +190,10 @@
                             <p class="text_white_modal">Поле для ввода рецепта:</p>
                             <textarea v-model="editedRecipe.instructions" class="recipe-instructions_recipe" placeholder="Введите рецепт здесь"></textarea>
                             <p class="text_white_modal">Время приготовления (в минутах):</p>
-                            <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
+                            <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах" >
                             <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
                             <select v-model="selectedIngredient" class="filters_modal">
-                                <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
+                                <option v-for="ingredient in availableIngredients" :key="ingredient.id" :value="ingredient">{{ ingredient.name }}</option>
                             </select>
                             <button v-on:click="addIngredient" class="button_transparent">Добавить</button>
 
@@ -495,6 +501,8 @@
                     .then(response => {
                         console.log('Список ингредиентов:', response.data);
                         this.ingredients = response.data.filter(ingredient => !this.newRecipe.ingredients.some(selected => selected.id === ingredient.id));
+
+                        this.updateAvailableIngredients();
                     })
                     .catch(error => {
                         console.error('Ошибка при получении списка ингредиентов:', error);
@@ -507,8 +515,7 @@
                 if (this.selectedIngredient) {
                     const ingredientWithQuantity = { ...this.selectedIngredient, quantity: 1 };
                     this.selectedIngredients.push(ingredientWithQuantity);
-                    this.newRecipe.ingredients.push(ingredientWithQuantity); // Добавляем ингредиент в newRecipe.ingredients
-
+                    this.newRecipe.ingredients.push(ingredientWithQuantity);
                     //Добавила для исчезнавения из выпадающего спсика выбранного ингредиента
                     const index = this.ingredients.findIndex(ingredient => ingredient.id === this.selectedIngredient.id);
                     if (index !== -1) {
@@ -516,23 +523,32 @@
                     }
 
                     this.selectedIngredient = null;
-                    this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
+                    this.updateFilteredIngredients(); 
+
+                    this.updateAvailableIngredients();
                 }
             },
             removeIngredient(ingredientToRemove) {
                 const index = this.selectedIngredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
                 if (index !== -1) {
                     this.selectedIngredients.splice(index, 1);
+
+                    this.updateAvailableIngredients();
+
                     this.newRecipe.ingredients.splice(index, 1);
                     this.ingredients.push(ingredientToRemove);
                 }
                 this.updateFilteredIngredients();
-                // const indexInRecipe = this.editedRecipe.ingredients.findIndex(ingredient => ingredient.id === ingredientToRemove.id);
-                // if (indexInRecipe !== -1) {
-                //     this.editedRecipe.ingredients.splice(indexInRecipe, 1);
-                // }
-                // this.updateFilteredIngredients(); // Обновляем список доступных ингредиентов
             },
+
+            //добавляю 
+            updateAvailableIngredients() {
+                const selectedIngredientIds = this.selectedIngredients.map(ingredient => ingredient.id);
+                this.availableIngredients = this.ingredients.filter(ingredient => !selectedIngredientIds.includes(ingredient.id));
+            },
+
+
+
             minutesToSeconds(minutes) {
                 return minutes * 60;
             },
@@ -540,16 +556,22 @@
                 return seconds / 60;
             },
             openEditModal(recipe) {
+
+                this.updateAvailableIngredients();
                 this.editedRecipe = { ...recipe };
                 this.editedRecipe.cookingTime = this.secondsToMinutes(recipe.cookingTime);
                 this.showEditModal = true;
                 this.selectedIngredients = this.editedRecipe.ingredients.map(ingredient => ({ ...ingredient }));
                 this.fetchIngredients();
+
+               
             },
             closeEditModal() {
                 this.editedRecipe = null;
                 this.showEditModal = false;
                 this.selectedIngredients = [];
+
+                this.updateAvailableIngredients();
             },
             updateEditedIngredients() {
                 this.editedRecipe.ingredients = [];
