@@ -48,7 +48,7 @@
                     <img v-if="isFavorite(recipe.id)" src="~/Content/Images/icons8-heart-red.png" alt="Favorite Icon" class="favorite-icon">
                     <img v-else src="~/Content/Images/icons8-heart.png" alt="Favorite Icon" class="favorite-icon">
                 </button> *@
-                <favorite-star :recipe-id="recipe.id" :user-id="userId" :v-model="isFavorite(recipe.id)" :is-favorite="isFavorite(recipe.id)"></favorite-star>
+                <favorite-star :recipe-id="recipe.id" :user-id="userId" :v-model="isFavorite(recipe.id)" :is-favorite="isFavorite(recipe.id)" v-on:update:is-favorite="updateRecipeData(recipe.id, $event)"></favorite-star>
 
                 <h2 class="text_black">{{ recipe.title }}</h2>
                 <img :src="recipe.imageUrl" alt="Фото блюда" class="recipe-photo" />
@@ -704,7 +704,14 @@
                         console.error('Ошибка при получении избранных рецептов:', error);
                     });
             },
-
+            updateRecipeData(recipeId, isFavorite) {
+                // Здесь вы можете выполнить обновление данных рецепта на сервере или локально
+                // Например, можно отправить запрос на сервер для обновления isFavorite для конкретного recipeId
+                const recipeToUpdate = this.filteredRecipes.find(recipe => recipe.id === recipeId);
+                if (recipeToUpdate) {
+                    recipeToUpdate.isFavorite = isFavorite;
+                }
+            },
 
             isFavorite(recipeId) {
                 return this.favorites.includes(recipeId);
