@@ -115,7 +115,7 @@
                         return;
                     }
                     // Разрешить только цифры и символы, используемые в телефонных номерах
-                    const regex = /[0-9()+\- ]/;
+                    const regex = /[0-9()+\-]/;
                     if (!regex.test(key)) {
                         event.preventDefault();
                     }

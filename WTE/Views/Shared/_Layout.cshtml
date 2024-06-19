@@ -33,14 +33,33 @@
             text-indent: 40px;
 
         }
+
+        .Discriptionn {
+            color: black;
+            font-size: 18px;
+            font-family: Raleway;
+            justify-content: space-between;
+            text-decoration: none;
+            text-align: left;
+/*             margin-left: 100px; */
+            margin-right: 100px;
+            margin-top: 40px;
+            text-indent: 40px;
+        }
+
         .PhotoHowToWork{
             margin-left: 100px;
             margin-right: 100px;
             margin-top: 40px;
-            text-align:center;
-            align-content: center;
-            display: inline-block;
+            display: flex;
+            justify-content:center;
+            align-items: center;
+        }
 
+        .PhotoHowToWorkContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
         }
 
@@ -55,13 +74,14 @@
                         <div class="Discription">
                                 <p>Для авторизации необходимо нажать на кнопку «Аккаунт». В открывшейся странице вы сможет либо авторизироваться в системе, либо зарегистрироваться. Для того, чтобы пройти авторизацию вам нужно ввести свой номер телефона и пароль.
                 Для прохождения регистрации, вам необходимо заполнить поля: имя, номер телефона и пароль. После успешной регистрации вы сможете увидеть сообщение об успешной регистрации и авторизироваться.</p>
-                                         <img src="../Content/Images/how_to_work_autorization.png" class="PhotoHowToWork" alt="Описание изображения"/>
-                                                   <p>Вы сможете быстро искать интересующие блюда, а так же добавлять их в избранные. </p>
-                                                                    <img src="../Content/Images/how_to_work_liks.png" class="PhotoHowToWork" alt="Описание изображения"/>
-
-
-
-                                </div>
+                        <div class = "PhotoHowToWorkContainer">
+                         <img src="../Content/Images/how_to_work_autorization.png" class="PhotoHowToWork" alt="Описание изображения"/>
+                </div>
+                                  <p class="Discriptionn">Вы сможете быстро искать интересующие блюда, а так же добавлять их в избранные. </p>
+                                                                             <div class = "PhotoHowToWorkContainer">
+                                                                            <img src="../Content/Images/how_to_work_liks.png" class="PhotoHowToWork" alt="Описание изображения"/>
+                                                                     </div>
+                     </div>
                     `;
 
             // Убираем класс 'active' у всех ссылок в навигации
