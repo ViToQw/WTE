@@ -167,15 +167,9 @@
             <div class="modal-form">
                 <div class="modal_card_white">
                     <input v-model="editedRecipe.title" class="autorization_input_text" placeholder="Введите название нового блюда" maxlength="50" />
-                   @*  <input v-model="editedRecipe.imageUrl" class="autorization_input_text" placeholder="Введите URL фото блюда" /> *@
-                   @*  <input type="file" v-on:change="handleFileUpload" />
-                    <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
-                    <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button> *@
                     <input type="file" v-on:change="handleFileUpload" />
-                    <img :src="newRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
+                    <img :src="editedRecipe.imageUrl" alt="Здесь будет ваше фото, после добавления" class="recipe-photo" />
                     <button class="save_change_recipe" v-on:click="uploadFile">Загрузить фото</button>
-
-
                     <p class="text_black">Добавление нового ингредиента</p>
                     <input v-model="newIngredientName" class="new-ingredient-input" placeholder="Введите новый ингредиент" maxlength="50" />
                     <button class="button_orange" v-on:click="addNewIngredient">Добавить новый ингредиент</button>
@@ -206,7 +200,7 @@
                             <ul v-else>
                                 <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
                                     {{ ingredient.name }}
-                                    <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
+                                    <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity"  />
                                     <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
                                 </li>
                             </ul>
@@ -417,6 +411,15 @@
                 return true;
             },
             addNewRecipe() {
+
+                // Проверка наличия количества у каждого ингредиента
+                const invalidIngredient = this.newRecipe.ingredients.find(ingredient => !ingredient.quantity || !ingredient.quantity.trim());
+                if (invalidIngredient) {
+                    console.error('Количество для ингредиента отсутствует:', invalidIngredient);
+                    alert('Пожалуйста, заполните количество для всех ингредиентов');
+                    return;
+                }
+
                 if (this.newRecipe.title && this.newRecipe.imageUrl && this.newRecipe.cookingTime && this.newRecipe.difficulty && this.newRecipe.instructions && this.newRecipe.ingredients.length > 0) {
                     if (this.checkDuplicateTitle(this.newRecipe)) {
                         this.newRecipe.cookingTime = this.minutesToSeconds(this.newRecipe.cookingTime);
@@ -590,6 +593,17 @@
                 });
             },
 
+
+            checkDuplicateTitleForUpdate(editedRecipe) {
+                for (const recipe of this.recipes) {
+                    if (recipe.id !== editedRecipe.id && this.normalizeString(recipe.title) === this.normalizeString(editedRecipe.title)) {
+                        alert('Блюдо с таким названием уже существует');
+                        return false;
+                    }
+                }
+                return true;
+            },
+
             updateRecipe() {
                 console.log('Метод updateRecipe вызван');
                 console.log('editedRecipe:', this.editedRecipe);
@@ -600,6 +614,20 @@
                 }
 
                 if (this.editedRecipe.title && this.editedRecipe.imageUrl && this.editedRecipe.cookingTime && this.editedRecipe.difficulty && this.editedRecipe.instructions && this.editedRecipe.ingredients.length > 0) {
+
+                    if (!this.checkDuplicateTitleForUpdate(this.editedRecipe)) {
+                        return;
+                    }
+
+
+                    
+                    //Добавила часть кода для проверки колличества ингредиентов в изменении блюда 
+                    const invalidIngredient = this.editedRecipe.ingredients.find(ingredient => !ingredient.quantity || !ingredient.quantity.trim());
+                    if (invalidIngredient) {
+                        console.error('Количество для ингредиента отсутствует:', invalidIngredient);
+                        alert('Пожалуйста, заполните количество для всех ингредиентов');
+                        return;
+                    }
 
                     this.updateEditedIngredients();
                     const recipeData = {
@@ -615,6 +643,8 @@
                             this.showEditModal = false;
                             this.selectedIngredients = [];
                             this.fetchRecipes();
+
+                            this.editedRecipe.imageUrl = response.data.imageUrl;
 
                         })
                         .catch(error => {
@@ -836,7 +866,7 @@
             //     .catch(error => {
             //         console.error('Ошибка при загрузке данных:', error);
             //     });
-            this.loadData();
+            // this.loadData();
 
 
         }
@@ -1228,6 +1258,8 @@
         display: flex;
         gap: 20px;
     }
+
+
 
 </style>
 

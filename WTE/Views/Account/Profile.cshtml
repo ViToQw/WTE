@@ -23,7 +23,7 @@
                 </div>
                 <div class="profile_info_block">
                     <p class="profile_info_change">Телефон: </p>
-                    <input v-model="user.phone" class="input_info" placeholder="Введите телефон" />
+                    <input v-model="user.phone" class="input_info" placeholder="Введите телефон" type="tel" v-on:keydown="preventNonNumeric" />
                 </div>
                 <div class="profile_info_block">
                     <p class="profile_info_change">Дата регистрации: </p>
@@ -62,6 +62,19 @@
         },
         methods: {
 
+            //телефон проверка на буквы
+            preventNonNumeric(event) {
+                const key = event.key;
+                // Разрешить клавиши управления
+                if (key === "Backspace" || key === "Delete" || key === "ArrowLeft" || key === "ArrowRight" || key === "Tab") {
+                    return;
+                }
+                // Разрешить только цифры и символы, используемые в телефонных номерах
+                const regex = /[0-9()+\- ]/;
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                }
+            },
 
             //Добавила логику для фото
             handleFileUpload(event) {
