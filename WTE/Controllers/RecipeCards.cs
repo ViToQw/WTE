@@ -49,7 +49,7 @@ namespace WTE.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            var fileUrl = $"/uploads/{file.FileName}"; // URL для сохраненного файла
+            var fileUrl = $"/uploads/{newFileName}"; // URL для сохраненного файла
             return Ok(new { url = fileUrl });
         }
 

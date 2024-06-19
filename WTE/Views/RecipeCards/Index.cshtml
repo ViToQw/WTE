@@ -106,7 +106,7 @@
                             <p class="text_white_modal">Поле для ввода рецепта:</p>
                             <textarea v-model="newRecipe.instructions" class="recipe-instructions_recipe"  placeholder="Введите рецепт здесь"></textarea>
                             <p class="text_white_modal">Время приготовления (в минутах):</p>
-                            <input v-model.number="newRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах">
+                            <input v-model.number="newRecipe.cookingTime" type="number" min="5" class="recipe-instructions" placeholder="Укажите время в минутах">
                             <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
                             <select v-model="selectedIngredient" class="filters_modal">
                                 <option v-for="ingredient in ingredients" :value="ingredient">{{ ingredient.name }}</option>
@@ -120,7 +120,7 @@
                             <ul v-else>
                                 <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
                                     {{ ingredient.name }}
-                                    <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" />
+                                    <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" maxlength="20" />
                                     <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
                                 </li>
                             </ul>
@@ -186,7 +186,7 @@
                             <p class="text_white_modal">Поле для ввода рецепта:</p>
                             <textarea v-model="editedRecipe.instructions" class="recipe-instructions_recipe" placeholder="Введите рецепт здесь"></textarea>
                             <p class="text_white_modal">Время приготовления (в минутах):</p>
-                            <input v-model.number="editedRecipe.cookingTime" type="number" class="recipe-instructions" placeholder="Укажите время в минутах" >
+                            <input v-model.number="editedRecipe.cookingTime" type="number" min="5" class="recipe-instructions" placeholder="Укажите время в минутах">
                             <p class="text_white_modal">Выберите ингредиенты для рецепта:</p>
                             <select v-model="selectedIngredient" class="filters_modal">
                                 <option v-for="ingredient in availableIngredients" :key="ingredient.id" :value="ingredient">{{ ingredient.name }}</option>
@@ -200,7 +200,7 @@
                             <ul v-else>
                                 <li v-for="ingredient in selectedIngredients" :key="ingredient.id" class="text_white_modal">
                                     {{ ingredient.name }}
-                                    <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity"  />
+                                    <input v-model="ingredient.quantity" type="text" placeholder="Количество" class="ingredient-quantity" maxlength="20" />
                                     <button class="button_transparent" v-on:click="removeIngredient(ingredient)">Удалить</button>
                                 </li>
                             </ul>
@@ -402,8 +402,17 @@
             },
             //Добавляю метод для проверки на уникальность блюда
             checkDuplicateTitle(newRecipe) {
+                // for (const recipe of this.recipes) {
+                //     if (this.normalizeString(recipe.title) === this.normalizeString(newRecipe.title)) {
+                //         alert('Блюдо с таким названием уже существует');
+                //         return false;
+                //     }
+                // }
+                // return true;
+                const normalizedNewRecipeTitle = this.normalizeString(newRecipe.title);
                 for (const recipe of this.recipes) {
-                    if (this.normalizeString(recipe.title) === this.normalizeString(newRecipe.title)) {
+                    const normalizedExistingTitle = this.normalizeString(recipe.title);
+                    if (normalizedExistingTitle === normalizedNewRecipeTitle && recipe.id !== newRecipe.id) {
                         alert('Блюдо с таким названием уже существует');
                         return false;
                     }
@@ -422,6 +431,11 @@
 
                 if (this.newRecipe.title && this.newRecipe.imageUrl && this.newRecipe.cookingTime && this.newRecipe.difficulty && this.newRecipe.instructions && this.newRecipe.ingredients.length > 0) {
                     if (this.checkDuplicateTitle(this.newRecipe)) {
+                        if (this.newRecipe.cookingTime < 5) {
+                            alert('Время приготовления не может быть меньше 5 минут');
+                            return;
+                        }
+
                         this.newRecipe.cookingTime = this.minutesToSeconds(this.newRecipe.cookingTime);
                         axios.post('http://hnt8.ru:8222/recipe', this.newRecipe)
                             .then(response => {
@@ -445,29 +459,6 @@
                 } else {
                     alert('Пожалуйста, заполните все поля');
                 }
-                // if (this.newRecipe.title && this.newRecipe.imageUrl && this.newRecipe.cookingTime && this.newRecipe.difficulty && this.newRecipe.instructions && this.newRecipe.ingredients.length > 0) {
-                //     this.newRecipe.cookingTime = this.minutesToSeconds(this.newRecipe.cookingTime);
-                //     axios.post('http://hnt8.ru:8222/recipe', this.newRecipe)
-                //         .then(response => {
-                //             console.log('Блюдо успешно добавлено:', response.data);
-                //             this.fetchRecipes();
-                //             this.showModal = false;
-                //             this.newRecipe = {
-                //                 title: '',
-                //                 imageUrl: '',
-                //                 cookingTime: null,
-                //                 difficulty: '',
-                //                 instructions: '',
-                //                 ingredients: []
-                //             };
-                //             this.selectedIngredients = [];
-                //         })
-                //         .catch(error => {
-                //             console.error('Ошибка при добавлении блюда:', error);
-                //         });
-                // } else {
-                //     alert('Пожалуйста, заполните все поля');
-                // }
             },
             deleteRecipe(recipeId) {
                 if (confirm('Вы уверены, что хотите удалить это блюдо?')) {
@@ -483,8 +474,8 @@
             },
             addNewIngredient() {
                 if (this.newIngredientName) {
-
-                    const exists = this.ingredients.some(ingredient => ingredient.name === this.newIngredientName);
+                    const normalizedNewIngredientName = this.normalizeString(this.newIngredientName);
+                    const exists = this.ingredients.some(ingredient => this.normalizeString(ingredient.name) === normalizedNewIngredientName);
                     if (!exists) {
 
                         axios.post('http://hnt8.ru:8222/ingredient', { name: this.newIngredientName })
@@ -619,8 +610,6 @@
                         return;
                     }
 
-
-                    
                     //Добавила часть кода для проверки колличества ингредиентов в изменении блюда 
                     const invalidIngredient = this.editedRecipe.ingredients.find(ingredient => !ingredient.quantity || !ingredient.quantity.trim());
                     if (invalidIngredient) {
@@ -628,6 +617,12 @@
                         alert('Пожалуйста, заполните количество для всех ингредиентов');
                         return;
                     }
+
+                    if (this.editedRecipe.cookingTime < 5) {
+                        alert('Время приготовления не может быть меньше 5 минут');
+                        return;
+                    }
+
 
                     this.updateEditedIngredients();
                     const recipeData = {
